@@ -1,16 +1,64 @@
-# React + Vite
+# 📢 Murmullo - Red Social (TFG)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **Estado:** 🚧 En Desarrollo (Work in Progress)
 
-Currently, two official plugins are available:
+Este proyecto es el Frontend de una red social desarrollada como Trabajo de Fin de Grado (TFG). La aplicación permite a los usuarios compartir pensamientos, seguir a otros usuarios e interactuar mediante likes y comentarios.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+El objetivo principal es consolidar conocimientos en **React** y arquitecturas SPA consumiendo una API REST.
 
-## React Compiler
+---
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+## 🛠️ Stack Tecnológico
 
-## Expanding the ESLint configuration
+**Frontend:**
+* ⚛️ **React** (Vite)
+* 🎨 **Tailwind CSS** (Estilos y Diseño)
+* 🛣️ **React Router DOM** (Navegación)
+* 📡 **Axios** (Cliente HTTP)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**Backend (API):**
+* 🦁 **Laravel** (API REST)
+* 🔐 **Laravel Sanctum** (Autenticación)
+* 🗄️ **MySQL** (Base de datos)
+
+---
+
+## 🚀 Funcionalidades (MVP)
+
+El Producto Mínimo Viable incluye:
+
+- [ ] **Autenticación:** Registro y Login (Token Based).
+- [ ] **Feed:** Visualización cronológica de posts.
+- [ ] **Creación:** Publicar nuevos posts (texto).
+- [ ] **Social:**
+    - [ ] Sistema de Likes.
+    - [ ] Seguir/Dejar de seguir usuarios.
+    - [ ] Comentarios.
+- [ ] **Perfil:** Ver posts propios y de otros usuarios.
+
+---
+
+## ⚙️ Instalación y Uso
+
+1.  **Clonar el repositorio:**
+    ```bash
+    git clone [https://github.com/TU_USUARIO/murmullo_front.git](https://github.com/TU_USUARIO/murmullo_front.git)
+    cd murmullo_front
+    ```
+
+2.  **Instalar dependencias:**
+    ```bash
+    npm install
+    ```
+
+3.  **Configurar variables de entorno:**
+    Renombra el archivo `.env.example` a `.env` (si aplica) o asegúrate de que la API de Laravel está corriendo en `http://localhost:8000`.
+
+4.  **Ejecutar en desarrollo:**
+    ```bash
+    npm run dev
+    ```
+
+
+**Autor:** Jorge Enrique Fernández
+**TFG:** Curso 2025/2026
