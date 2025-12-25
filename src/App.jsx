@@ -1,12 +1,12 @@
 import { useState } from 'react'
-
+import { Layout } from './components/Layout'
 
 
 function App() {
   return (
-    <h1 className="text-3xl font-bold text-red-600 underline cursor-pointer">
-  TEST TAILWIND
-</h1>
+    <Layout>
+      
+    </Layout>
   )
 }
 
