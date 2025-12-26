@@ -2,7 +2,7 @@ import { Link, NavLink } from "react-router-dom"
 import logo from "../assets/img/logo.png"
 
 
-export const Layout = () => {
+export const SideBar = () => {
     const datosLink = [
         {
             className: 'fi fi-rr-home',
@@ -39,7 +39,17 @@ export const Layout = () => {
 
                 <div className="flex justify-start flex-col gap-16 mt-10 items-start ml-6 font-bold text-2xl w-full">
                     {datosLink.map((datos) => (
-                        <NavLink className={"flex text-white gap-4"} to={datos.route}>
+
+                        <NavLink
+                            className={({ isActive }) => {
+                                const classBase = "flex gap-4 items-center transition-colors duration-300 text-white" 
+
+                                const classActive = isActive ? "font-bold scale-105 ":"font-normal"
+                                return `${classBase}  ${classActive}`
+                            }
+                            }
+                            to={datos.route}
+                            key={datos.text}>
                             <i className={datos.className}></i>
                             <span>{datos.text}</span>
                         </NavLink>
