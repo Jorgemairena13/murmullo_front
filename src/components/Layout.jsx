@@ -3,6 +3,29 @@ import logo from "../assets/img/logo.png"
 
 
 export const Layout = () => {
+    const datosLink = [
+        {
+            className: 'fi fi-rr-home',
+            text: 'Inicio',
+            route: ''
+        },
+        {
+            className: 'fi fi-rr-search',
+            text: 'Busqueda',
+            route: '/busqueda'
+        },
+        {
+            className: 'fi fi-rr-map',
+            text: 'Explorar',
+            route: '/explorar'
+        },
+        {
+            className: 'fi fi-rr-user',
+            text: 'Perfil',
+            route: '/perfil'
+        },
+    ]
+
     return (
         <nav className="flex flex-col bg-slate-950 text-white w-48 h-screen">
             <div className="flex flex-col justify-center" >
@@ -13,30 +36,15 @@ export const Layout = () => {
                         className="h-32 w-auto object-contain"
                     />
                 </NavLink>
+
                 <div className="flex justify-start flex-col gap-16 mt-10 items-start ml-6 font-bold text-2xl w-full">
-                    
-                    <NavLinkLink className="flex gap-3">
-                    
-                        <i className="fi fi-rr-home"></i>
-                        <h4>Inicio</h4>
-                    
-                    </NavLinkLink>
-                    
+                    {datosLink.map((datos) => (
+                        <NavLink className={"flex text-white gap-4"} to={datos.route}>
+                            <i className={datos.className}></i>
+                            <span>{datos.text}</span>
+                        </NavLink>
+                    ))}
 
-                    <NavLink className="flex gap-3">
-                        <i className="fi fi-rr-search"></i>
-                        <h4>Busqueda</h4>
-                    </NavLink>
-
-                    <NavLink className="flex gap-3">
-                        <i className="fi fi-rr-map"></i>
-                        <h4>Explorar</h4>
-                    </NavLink>
-
-                    <NavLink className="flex gap-3">
-                        <i class="fi fi-rr-user"></i>
-                        <h4>Perfil</h4>
-                    </NavLink>
                 </div>
 
 
