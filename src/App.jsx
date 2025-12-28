@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { SideBar } from './components/SideBar'
+import { Layout } from './components/Layout'
 
 
 function App() {
   return (
-    <SideBar>
+    <Layout>
       
-    </SideBar>
+    </Layout>
   )
 }
 
