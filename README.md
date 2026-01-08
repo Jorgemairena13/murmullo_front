@@ -42,7 +42,7 @@ El Producto Mínimo Viable incluye:
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone [https://github.com/TU_USUARIO/murmullo_front.git](https://github.com/TU_USUARIO/murmullo_front.git)
+    git clone [https://github.com/Jorgemairena13/murmullo_front.git](https://github.com/Jorgemairena13/murmullo_front.git)
     cd murmullo_front
     ```
 
@@ -52,13 +52,17 @@ El Producto Mínimo Viable incluye:
     ```
 
 3.  **Configurar variables de entorno:**
-    Renombra el archivo `.env.example` a `.env` (si aplica) o asegúrate de que la API de Laravel está corriendo en `http://localhost:8000`.
+    Crea un archivo `.env` en la raíz (puedes copiar un `.env.example` si existe) para definir la URL de tu API backend:
+    ```env
+    VITE_API_URL=http://localhost:8000/api
+    ```
 
 4.  **Ejecutar en desarrollo:**
     ```bash
     npm run dev
     ```
 
+---
 
 **Autor:** Jorge Enrique Fernández
 **TFG:** Curso 2025/2026
