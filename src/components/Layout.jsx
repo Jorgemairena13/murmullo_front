@@ -3,10 +3,10 @@ import { SideBar } from "./SideBar";
 
 export const Layout = () => {
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen flex">
             <SideBar />
 
-            <main className="w-full bg-red-600 min-h-screen">
+            <main className="w-full bg-black min-h-screen md:ml-20 lg:ml-44">
                 <Outlet/>
             </main>
 
