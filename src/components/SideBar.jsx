@@ -22,7 +22,7 @@ export const SideBar = () => {
         {
             className: 'fi fi-rr-user',
             text: 'Perfil',
-            route: '/perfil'
+            route: '/profile'
         },
 
     ]
