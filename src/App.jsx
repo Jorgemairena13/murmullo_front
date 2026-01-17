@@ -5,7 +5,7 @@ import { FeedPage } from './pages/FeedPage'
 import { ExplorarPage } from './pages/ExplorarPage'
 import { Profile } from './pages/Profilepage'
 import { Login } from './pages/Login'
-import { Register } from './pages/RegisterPage'
+import  RegisterPage  from './pages/RegisterPage'
 import { Busqueda } from './pages/BusquedaPage'
 
 
@@ -21,7 +21,7 @@ function App() {
         <Route path='/busqueda' element={<Busqueda />} />
         <Route path='/profile' element={<Profile />} />
         <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
+        <Route path='/register' element={<RegisterPage />} />
 
 
       </Route>
