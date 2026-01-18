@@ -15,13 +15,14 @@ import { Busqueda } from './pages/BusquedaPage'
 
 import { Login } from './pages/Login'
 import RegisterPage from './pages/RegisterPage'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
     const location = useLocation();
 
-    // 1. Estado para la dirección de la animación
+    
     const [direction, setDirection] = useState(0);
-    // 2. Estado para saber de dónde venimos
+    
     const [prevPath, setPrevPath] = useState(location.pathname);
 
     
@@ -63,7 +64,7 @@ function App() {
                         path='/register'
                         element={<RegisterPage direction={direction} />}
                     />
-
+                    <Route element={<ProtectedRoute />}>
                     {/* === ZONA APLICACIÓN (Con Barra de Navegación) === */}
                     <Route element={<Layout />}>
                         <Route path='/' element={<FeedPage />} />
@@ -73,6 +74,7 @@ function App() {
                         <Route path='/profile' element={<Profile />} />
                     </Route>
 
+                    </Route>
                 </Routes>
             </AnimatePresence>
         </div>

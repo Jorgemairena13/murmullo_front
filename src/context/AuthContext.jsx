@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
                 return
             }
             try {
-                const { data } = await client.get('/api/user')
+                const { data } = await client.get('/user')
                 setUser(data)
                 setIsAuthenticated(true)
             } catch (error) {
@@ -42,8 +42,9 @@ export const AuthProvider = ({ children }) => {
 
             }
 
-            checkAuth()
+            
         }
+        checkAuth()
     }, [])
 
     return (

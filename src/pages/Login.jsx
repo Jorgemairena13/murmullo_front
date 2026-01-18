@@ -1,11 +1,12 @@
 import { useState } from "react"
-import { login } from "../services/auth"
+import { login as loginService} from "../services/auth"
 import { useNavigate } from "react-router-dom"
 import logo from '../assets/img/logo.png'
 import { Link } from "react-router-dom"
-
+import { useAuth } from "../context/AuthContext"
 import Transition from "../components/Transition"
 export const Login = ({direction}) => {
+    const { login: setAuthSession } = useAuth();
     const navigate = useNavigate()
     const [credenciales, setCredenciales] = useState({
         email: '',
@@ -26,8 +27,10 @@ export const Login = ({direction}) => {
         e.preventDefault()
         try {
             console.log('Enviando datos', credenciales)
-            const data = await login(credenciales);
-            localStorage.setItem('token', data.token)
+            const data = await loginService(credenciales);
+            
+            console.log('Respuesta Laravel',data)
+            setAuthSession(data.user, data.token)
             navigate('/', { replace: true })
         } catch (error) {
             console.error(error);

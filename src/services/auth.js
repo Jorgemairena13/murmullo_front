@@ -3,7 +3,7 @@ import client from "./client";
 // Login
 export const login = async (credenciales) => {
     const respuesta = await client.post('/login',credenciales)
-
+    
     return respuesta.data
 }
 // Registro
