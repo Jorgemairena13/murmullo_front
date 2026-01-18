@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
+import client from "../services/client";
 
 const AuthContext = createContext();
 
@@ -6,7 +7,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null)
     const [token, setToken] = useState(localStorage.getItem('token'))
     const [autentificado, setIsAuthenticated] = useState(false)
-
+    const [loading, setLoading] = useState(true);
     const login = (userData, token) => {
         setUser(userData)
         setToken(token)
@@ -24,10 +25,26 @@ export const AuthProvider = ({ children }) => {
     }
 
     useEffect(() => {
-        if (token) {
-            setIsAuthenticated(true)
+        async function checkAuth() {
+            if (!token) {
+                setIsAuthenticated(false)
+                return
+            }
+            try {
+                const { data } = await client.get('/api/user')
+                setUser(data)
+                setIsAuthenticated(true)
+            } catch (error) {
+                console.error('Token invalidado o error al obtener el usuario:', error)
+                logout()
+            } finally {
+                setLoading(false);
+
+            }
+
+            checkAuth()
         }
-    }, [token])
+    }, [])
 
     return (
         <AuthContext.Provider value={{
@@ -43,5 +60,5 @@ export const AuthProvider = ({ children }) => {
 }
 
 export const useAuth = () => {
-  return useContext(AuthContext);
+    return useContext(AuthContext);
 };
