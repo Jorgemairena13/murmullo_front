@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
+import client from "../services/client";
 
 const AuthContext = createContext();
 
@@ -23,11 +24,22 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("token")
     }
 
-    useEffect(() => {
-        if (token) {
-            setIsAuthenticated(true)
+    useEffect(async () => {
+        if (!token) {
+            setIsAuthenticated(false)
+            return
         }
-    }, [token])
+        try {
+            const {data} = await client.get('/api/user')
+            setUser(data)
+            setIsAuthenticated(true)
+        } catch (error) {
+            console.error('Token invalidado o error al obtener el usuario:', error)
+            logout()
+        }finally{
+            setIsAuthenticated(false);
+        }
+    }, [])
 
     return (
         <AuthContext.Provider value={{
