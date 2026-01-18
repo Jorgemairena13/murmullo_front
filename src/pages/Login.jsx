@@ -64,8 +64,8 @@ export const Login = ({direction}) => {
                         
                         {/* Cabecera visible solo en móvil */}
                         <div className="lg:hidden mb-8 text-center">
-                            <div className="h-14 w-14 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4">
-                                <span className="text-2xl font-bold text-white">M</span>
+                            <div className="h-16 w-16 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4">
+                                <img src={logo} alt="logo" className="h-auto w-12" />
                             </div>
                             <h2 className="text-2xl font-bold text-white">Iniciar Sesión</h2>
                             <p className="text-gray-400 text-sm mt-2">¡Hola de nuevo! Te echábamos de menos.</p>
