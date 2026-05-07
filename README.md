@@ -1,68 +1,98 @@
-# 📢 Murmullo - Red Social (TFG)
+# Murmullo — Frontend React
 
-> **Estado:** 🚧 En Desarrollo (Work in Progress)
+Frontend de **Murmullo**, una red social desarrollada como Trabajo de Fin de Grado (DAW). SPA construida con React y Tailwind CSS que consume la API REST del backend en Laravel.
 
-Este proyecto es el Frontend de una red social desarrollada como Trabajo de Fin de Grado (TFG). La aplicación permite a los usuarios compartir pensamientos, seguir a otros usuarios e interactuar mediante likes y comentarios.
-
-El objetivo principal es consolidar conocimientos en **React** y arquitecturas SPA consumiendo una API REST.
+> 🔗 **Backend:** [github.com/Jorgemairena13/Murmullo](https://github.com/Jorgemairena13/Murmullo) · 🌐 **Demo en producción:** [jorgefernandez.vercel.app](https://jorgefernandez.vercel.app)
 
 ---
 
-## 🛠️ Stack Tecnológico
+## Stack tecnológico
 
-**Frontend:**
-* ⚛️ **React** (Vite)
-* 🎨 **Tailwind CSS** (Estilos y Diseño)
-* 🛣️ **React Router DOM** (Navegación)
-* 📡 **Axios** (Cliente HTTP)
-
-**Backend (API):**
-* 🦁 **Laravel** (API REST)
-* 🔐 **Laravel Sanctum** (Autenticación)
-* 🗄️ **MySQL** (Base de datos)
+- **Framework:** React 18 (Vite)
+- **Estilos:** Tailwind CSS
+- **Navegación:** React Router DOM
+- **HTTP:** Axios
+- **Autenticación:** Token Bearer (Laravel Sanctum)
+- **Despliegue:** Vercel
 
 ---
 
-## 🚀 Funcionalidades (MVP)
+## Funcionalidades
 
-El Producto Mínimo Viable incluye:
-
-- [ ] **Autenticación:** Registro y Login (Token Based).
-- [ ] **Feed:** Visualización cronológica de posts.
-- [ ] **Creación:** Publicar nuevos posts (texto).
-- [ ] **Social:**
-    - [ ] Sistema de Likes.
-    - [ ] Seguir/Dejar de seguir usuarios.
-    - [ ] Comentarios.
-- [ ] **Perfil:** Ver posts propios y de otros usuarios.
-
----
-
-## ⚙️ Instalación y Uso
-
-1.  **Clonar el repositorio:**
-    ```bash
-    git clone [https://github.com/Jorgemairena13/murmullo_front.git](https://github.com/Jorgemairena13/murmullo_front.git)
-    cd murmullo_front
-    ```
-
-2.  **Instalar dependencias:**
-    ```bash
-    npm install
-    ```
-
-3.  **Configurar variables de entorno:**
-    Crea un archivo `.env` en la raíz (puedes copiar un `.env.example` si existe) para definir la URL de tu API backend:
-    ```env
-    VITE_API_URL=http://localhost:8000/api
-    ```
-
-4.  **Ejecutar en desarrollo:**
-    ```bash
-    npm run dev
-    ```
+- Registro e inicio de sesión con autenticación por token
+- Feed personalizado con publicaciones de usuarios seguidos
+- Crear, editar y eliminar publicaciones propias
+- Sistema de likes en publicaciones
+- Sistema de comentarios
+- Seguir y dejar de seguir usuarios
+- Ver perfil propio y de otros usuarios
+- Rutas protegidas — redirige a login si no hay sesión activa
+- Persistencia de sesión mediante token almacenado
 
 ---
 
-**Autor:** Jorge Enrique Fernández
-**TFG:** Curso 2025/2026
+## Arquitectura
+
+La aplicación es una SPA completamente desacoplada del backend. Toda la comunicación se realiza mediante peticiones HTTP a la API REST. No hay renderizado en servidor — React gestiona el estado y el enrutado en cliente.
+
+```
+React SPA  ──── Axios / HTTP ────→  Laravel API REST  ──→  MySQL
+```
+
+Las rutas protegidas verifican la existencia del token antes de renderizar. Si no hay sesión activa, redirigen automáticamente a `/login`.
+
+---
+
+## Instalación local
+
+### Requisitos previos
+
+- Node.js 18+
+- npm
+- Backend de Murmullo levantado en local ([ver instrucciones](https://github.com/Jorgemairena13/Murmullo))
+
+### Pasos
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/Jorgemairena13/murmullo_front.git
+cd murmullo_front
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Configurar la URL del backend
+# Crea un archivo .env en la raíz con:
+VITE_API_URL=http://localhost:8000/api
+
+# 4. Arrancar en modo desarrollo
+npm run dev
+```
+
+La aplicación estará disponible en `http://localhost:5173`
+
+### Build de producción
+
+```bash
+npm run build
+```
+
+---
+
+## Estructura del proyecto
+
+```
+src/
+├── components/       # Componentes reutilizables (Post, Comment, Avatar...)
+├── pages/            # Vistas principales (Feed, Login, Register, Profile...)
+├── context/          # AuthContext — gestión global de sesión
+├── services/         # Llamadas a la API (authService, postService...)
+└── main.jsx          # Punto de entrada
+```
+
+---
+
+## Autor
+
+**Jorge Enrique Fernández**
+[linkedin.com/in/jorge-fernandez-dev](https://linkedin.com/in/jorge-fernandez-dev) · [jorgefernandez.vercel.app](https://jorgefernandez.vercel.app) · [github.com/Jorgemairena13](https://github.com/Jorgemairena13)
