@@ -1,6 +1,7 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import client from "../services/client";
 
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -8,11 +9,11 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token'))
     const [autentificado, setIsAuthenticated] = useState(false)
     const [loading, setLoading] = useState(true);
+
     const login = (userData, token) => {
         setUser(userData)
         setToken(token)
         setIsAuthenticated(true)
-        // Guardamos el token
         localStorage.setItem("token", token)
     }
 
@@ -20,7 +21,6 @@ export const AuthProvider = ({ children }) => {
         setUser(null)
         setToken(null)
         setIsAuthenticated(false)
-        // Guardamos el token
         localStorage.removeItem("token")
     }
 
@@ -39,10 +39,7 @@ export const AuthProvider = ({ children }) => {
                 logout()
             } finally {
                 setLoading(false);
-
             }
-
-            
         }
         checkAuth()
     }, [])
@@ -53,7 +50,8 @@ export const AuthProvider = ({ children }) => {
             token,
             autentificado,
             login,
-            logout
+            logout,
+            loading
         }}>
             {children}
         </AuthContext.Provider>
