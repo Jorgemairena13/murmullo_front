@@ -2,7 +2,7 @@
 
 Frontend de **Murmullo**, una red social desarrollada como Trabajo de Fin de Grado (DAW). SPA construida con React y Tailwind CSS que consume la API REST del backend en Laravel.
 
-> 🔗 **Backend:** [github.com/Jorgemairena13/Murmullo](https://github.com/Jorgemairena13/Murmullo) · 🌐 **Demo en producción:** [jorgefernandez.vercel.app](https://jorgefernandez.vercel.app)
+> 🔗 **Backend:** [github.com/Jorgemairena13/Murmullo](https://github.com/Jorgemairena13/Murmullo) · 🌐 **Demo en producción:** [murmullo-front.vercel.app](murmullo-front.vercel.app)
 
 ---
 
