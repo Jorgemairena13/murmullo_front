@@ -1,118 +1,145 @@
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
-import client from "../services/client"; 
+import { useParams } from "react-router-dom";
+import { getUserProfile, getUserPosts, followUser, unfollowUser } from "../services/postService";
 
 export const Profile = () => {
-    const { user, logout, isLoading } = useAuth();
-    const LARAVEL_URL = "http://localhost:8000";
+    const { user: currentUser, logout, isLoading } = useAuth();
+    const { id } = useParams();
+    const LARAVEL_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || "http://localhost:8000";
 
-    // Estado para guardar los datos frescos del perfil (incluyendo contadores)
-    const [profileStats, setProfileStats] = useState({
-        posts_count: 0,
-        followers_count: 0,
-        following_count: 0
-    });
+    const [profileUser, setProfileUser] = useState(null);
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const userId = id || currentUser?.id;
 
-    // Efecto: Pedir los datos COMPLETOS del usuario (con contadores)
     useEffect(() => {
-        const fetchProfileData = async () => {
-            if (user?.id) {
-                try {
-                    
-                    const { data } = await client.get(`/users/${user.id}`);
-                    
-                    const userData = data.usuario;
-
-                    setProfileStats({
-                        posts_count: userData.posts_count || 0,
-                        followers_count: userData.followers_count || 0,
-                        following_count: userData.following_count || 0
-                    });
-
-                } catch (error) {
-                    console.error("Error cargando perfil completo", error);
-                }
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const userData = await getUserProfile(userId);
+                console.log('User profile:', userData);
+                setProfileUser(userData.usuario || userData);
+                
+                const postsData = await getUserPosts(userId);
+                console.log('User posts:', postsData);
+                const postsArray = postsData.posts?.data || postsData.posts || postsData.data || [];
+                setPosts(postsArray);
+            } catch (err) {
+                console.error('Error loading profile:', err);
+            } finally {
+                setLoading(false);
             }
         };
 
-        fetchProfileData();
-    }, [user]);
+        if (userId) fetchData();
+    }, [userId]);
 
-    const getAvatar = () => {
-        if (!user?.avatar_url) {
-            return `https://ui-avatars.com/api/?name=${user?.name}&background=random&color=fff&size=128`;
+    const handleFollow = async () => {
+        try {
+            if (profileUser.is_following) {
+                await unfollowUser(userId);
+                setProfileUser(prev => ({ ...prev, is_following: false, followers_count: prev.followers_count - 1 }));
+            } else {
+                await followUser(userId);
+                setProfileUser(prev => ({ ...prev, is_following: true, followers_count: prev.followers_count + 1 }));
+            }
+        } catch (err) {
+            console.error('Follow error:', err);
         }
-        return `${LARAVEL_URL}${user.avatar_url}`;
     };
 
-    if (isLoading) return <div className="text-white text-center mt-20">Cargando perfil...</div>;
+    const isOwnProfile = !id || id == currentUser?.id;
+
+    const getAvatar = (userData) => {
+        if (userData?.avatar_url) {
+            return userData.avatar_url.startsWith('http') ? userData.avatar_url : `${LARAVEL_URL}${userData.avatar_url}`;
+        }
+        return `https://ui-avatars.com/api/?name=${userData?.name || 'U'}&background=random&color=fff&size=128`;
+    };
+
+    if (isLoading || loading) return <div className="text-white text-center mt-20 flex justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div></div>;
+
+    if (!profileUser) return <div className="text-white text-center mt-20">Usuario no encontrado</div>;
 
     return (
-        <div className="max-w-4xl mx-auto mt-10 p-6">
-            
-            <div className="bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-700">
-                
-                {/* Banner */}
-                <div className="h-32 bg-gradient-to-r from-blue-600 to-purple-600"></div>
-
-                <div className="px-6 pb-6 relative">
-                    {/* Avatar */}
-                    <div className="relative -mt-16 mb-4">
-                        <img 
-                            src={getAvatar()} 
-                            alt="Avatar"
-                            className="w-32 h-32 rounded-full object-cover border-4 border-gray-800"
-                            onError={(e) => {
-                                e.target.src = `https://ui-avatars.com/api/?name=${user?.name}&background=random&color=fff`;
-                            }} 
-                        />
+        <div className="max-w-xl mx-auto">
+            <div className="p-4">
+                <div className="flex items-center gap-4 mb-6">
+                    <img 
+                        src={getAvatar(profileUser)} 
+                        alt="Avatar"
+                        className="w-20 h-20 rounded-full object-cover border-2 border-gray-700"
+                    />
+                    <div className="flex-1">
+                        <h1 className="text-xl font-bold text-white">{profileUser.name}</h1>
+                        <p className="text-gray-400">@{profileUser.username}</p>
                     </div>
-
-                    {/* Info Usuario */}
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <h1 className="text-3xl font-bold text-white">{user?.name}</h1>
-                            <p className="text-gray-400">@{user?.email?.split('@')[0]}</p>
-                            <p className="text-sm text-gray-500 mt-1">{user?.email}</p>
-                        </div>
-                        
+                    
+                    {!isOwnProfile && (
+                        <button 
+                            onClick={handleFollow}
+                            className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${
+                                profileUser.is_following 
+                                    ? 'bg-gray-700 text-white hover:bg-gray-600' 
+                                    : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                            }`}
+                        >
+                            {profileUser.is_following ? 'Siguiendo' : 'Seguir'}
+                        </button>
+                    )}
+                    
+                    {isOwnProfile && (
                         <button 
                             onClick={logout}
-                            className="px-4 py-2 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition-colors border border-red-500/20 font-medium text-sm"
+                            className="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm hover:bg-gray-600"
                         >
                             Cerrar Sesión
                         </button>
-                    </div>
+                    )}
+                </div>
 
-                    {/* --- ESTADÍSTICAS REALES --- */}
-                    <div className="grid grid-cols-3 gap-4 mt-8 border-t border-gray-700 pt-6">
-                        <div className="text-center group cursor-pointer hover:bg-gray-700/30 rounded-lg p-2 transition">
-                            <span className="block text-2xl font-bold text-white group-hover:text-blue-400 transition">
-                                {profileStats.posts_count}
-                            </span>
-                            <span className="text-sm text-gray-400">Publicaciones</span>
-                        </div>
-                        <div className="text-center group cursor-pointer hover:bg-gray-700/30 rounded-lg p-2 transition">
-                            <span className="block text-2xl font-bold text-white group-hover:text-blue-400 transition">
-                                {profileStats.followers_count}
-                            </span>
-                            <span className="text-sm text-gray-400">Seguidores</span>
-                        </div>
-                        <div className="text-center group cursor-pointer hover:bg-gray-700/30 rounded-lg p-2 transition">
-                            <span className="block text-2xl font-bold text-white group-hover:text-blue-400 transition">
-                                {profileStats.following_count}
-                            </span>
-                            <span className="text-sm text-gray-400">Siguiendo</span>
-                        </div>
+                <div className="flex justify-around text-center mb-6">
+                    <div>
+                        <span className="block text-xl font-bold text-white">{posts.length}</span>
+                        <span className="text-sm text-gray-400">Publicaciones</span>
+                    </div>
+                    <div>
+                        <span className="block text-xl font-bold text-white">{profileUser.followers_count || 0}</span>
+                        <span className="text-sm text-gray-400">Seguidores</span>
+                    </div>
+                    <div>
+                        <span className="block text-xl font-bold text-white">{profileUser.following_count || 0}</span>
+                        <span className="text-sm text-gray-400">Siguiendo</span>
                     </div>
                 </div>
             </div>
 
-            {/* DEBUG: Para ver si llegan los contadores */}
-            <div className="mt-8 bg-black/50 p-4 rounded text-xs text-green-400 font-mono">
-                Stats cargados: {JSON.stringify(profileStats, null, 2)}
+            <div className="grid grid-cols-3 gap-1">
+                {posts.map(post => (
+                    <div key={post.id} className="aspect-square bg-gray-800">
+                        {post.imagen ? (
+                            <img 
+                                src={post.imagen.startsWith('http') ? post.imagen : `${LARAVEL_URL}${post.imagen}`}
+                                alt="post" 
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
+                                {post.texto?.substring(0, 20)}...
+                            </div>
+                        )}
+                    </div>
+                ))}
             </div>
-
+            
+            {posts.length === 0 && (
+                <div className="text-center text-gray-500 py-8">
+                    No hay publicaciones aún
+                </div>
+            )}
         </div>
     );
 };
+
+export default Profile;
