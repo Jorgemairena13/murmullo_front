@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useState, useContext, useEffect, useRef } from "react";
 import client from "../services/client";
 
 
@@ -9,6 +9,11 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token'))
     const [autentificado, setIsAuthenticated] = useState(false)
     const [loading, setLoading] = useState(true);
+    const tokenRef = useRef(token);
+
+    useEffect(() => {
+        tokenRef.current = token;
+    }, [token]);
 
     const login = (userData, token) => {
         setUser(userData)
@@ -26,8 +31,9 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         async function checkAuth() {
-            if (!token) {
+            if (!tokenRef.current) {
                 setIsAuthenticated(false)
+                setLoading(false)
                 return
             }
             try {
