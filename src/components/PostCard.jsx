@@ -4,7 +4,7 @@ import { CommentList } from './CommentList';
 import { getComments } from '../services/commentService';
 
 export const PostCard = ({ post, onLike }) => {
-    const { id, texto, imagen, is_liked = false, user, comments = [], comments_count = 0 } = post;
+    const { id, texto, imagen_url, is_liked = false, user, comments = [], comments_count = 0 } = post;
     const [showComments, setShowComments] = useState(false);
     const [postComments, setPostComments] = useState(comments);
     const [loadingComments, setLoadingComments] = useState(false);
@@ -49,8 +49,8 @@ export const PostCard = ({ post, onLike }) => {
     };
 
     const getImageUrl = () => {
-        if (imagen) {
-            return imagen.startsWith('http') ? imagen : `http://localhost:8000${imagen}`;
+        if (imagen_url) {
+            return imagen_url.startsWith('http') ? imagen_url : `http://localhost:8000${imagen_url}`;
         }
         return 'https://via.placeholder.com/600x600/1a1a2e/4a4a6a?text=Murmullo';
     };
