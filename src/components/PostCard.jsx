@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { CommentForm } from './CommentForm';
 import { CommentList } from './CommentList';
 import { getComments } from '../services/commentService';
+import { BASE_URL } from '../services/client';
 
 export const PostCard = ({ post, onLike }) => {
     const { id, texto, imagen_url, is_liked = false, user, comments = [], comments_count = 0 } = post;
@@ -50,7 +51,7 @@ export const PostCard = ({ post, onLike }) => {
 
     const getImageUrl = () => {
         if (imagen_url) {
-            return imagen_url.startsWith('http') ? imagen_url : `http://localhost:8000${imagen_url}`;
+            return imagen_url.startsWith('http') ? imagen_url : `${BASE_URL}${imagen_url}`;
         }
         return 'https://via.placeholder.com/600x600/1a1a2e/4a4a6a?text=Murmullo';
     };
