@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { searchUsers } from '../services/postService';
+import { searchUsers, followUser, unfollowUser } from '../services/postService';
 
 export const Busqueda = () => {
     const [query, setQuery] = useState('');
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [followingUsers, setFollowingUsers] = useState({});
 
     useEffect(() => {
         const search = async () => {
@@ -16,7 +17,11 @@ export const Busqueda = () => {
             setLoading(true);
             try {
                 const data = await searchUsers(query);
-                setUsers(data.users || data || []);
+                const usersList = data.users || data || [];
+                setUsers(usersList);
+                const followState = {};
+                usersList.forEach(u => { followState[u.id] = u.is_following; });
+                setFollowingUsers(followState);
             } catch (err) {
                 console.error('Search error:', err);
             } finally {
@@ -27,6 +32,21 @@ export const Busqueda = () => {
         const debounce = setTimeout(search, 300);
         return () => clearTimeout(debounce);
     }, [query]);
+
+    const handleFollow = async (userId, isFollowing) => {
+        const previous = { ...followingUsers };
+        setFollowingUsers(prev => ({ ...prev, [userId]: !isFollowing }));
+        try {
+            if (isFollowing) {
+                await unfollowUser(userId);
+            } else {
+                await followUser(userId);
+            }
+        } catch (err) {
+            console.error('Follow error:', err);
+            setFollowingUsers(previous);
+        }
+    };
 
     return (
         <div className="h-[calc(100vh-60px)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -59,25 +79,36 @@ export const Busqueda = () => {
 
             {!loading && users.length > 0 && (
                 <div className="divide-y divide-gray-800">
-                    {users.map(user => (
-                        <Link 
-                            to={`/profile/${user.id}`} 
-                            key={user.id}
-                            className="flex items-center gap-4 p-4 hover:bg-gray-800/50 transition-colors"
-                        >
-                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold">
-                                {user.avatar_url ? (
-                                    <img src={user.avatar_url} alt={user.name} className="w-full h-full rounded-full object-cover" />
-                                ) : (
-                                    user.name?.charAt(0).toUpperCase() || 'U'
-                                )}
+                    {users.map(user => {
+                        const isFollowing = followingUsers[user.id];
+                        return (
+                            <div key={user.id} className="flex items-center gap-4 p-4 hover:bg-gray-800/50 transition-colors">
+                                <Link to={`/profile/${user.id}`} className="flex items-center gap-4 flex-1 min-w-0">
+                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold shrink-0">
+                                        {user.avatar_url ? (
+                                            <img src={user.avatar_url} alt={user.name} className="w-full h-full rounded-full object-cover" />
+                                        ) : (
+                                            user.name?.charAt(0).toUpperCase() || 'U'
+                                        )}
+                                    </div>
+                                    <div className="min-w-0">
+                                        <p className="text-white font-semibold text-sm truncate">{user.name}</p>
+                                        <p className="text-gray-500 text-sm truncate">@{user.username}</p>
+                                    </div>
+                                </Link>
+                                <button
+                                    onClick={() => handleFollow(user.id, isFollowing)}
+                                    className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                                        isFollowing
+                                            ? 'bg-gray-700 text-white hover:bg-gray-600'
+                                            : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-500 hover:to-pink-500'
+                                    }`}
+                                >
+                                    {isFollowing ? 'Siguiendo' : 'Seguir'}
+                                </button>
                             </div>
-                            <div className="flex-1">
-                                <p className="text-white font-semibold text-sm">{user.name}</p>
-                                <p className="text-gray-500 text-sm">@{user.username}</p>
-                            </div>
-                        </Link>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
 
