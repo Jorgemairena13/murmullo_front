@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { PostCard } from '../components/PostCard';
+import { CreatePostForm } from '../components/CreatePostForm';
 import { getFeed, likePost, unlikePost } from '../services/postService';
 
 export const FeedPage = () => {
@@ -54,8 +55,16 @@ export const FeedPage = () => {
         }
     };
 
+    const handlePostCreated = (newPost) => {
+        setPosts(prev => [newPost, ...prev]);
+    };
+
     return (
         <div className="max-w-xl mx-auto h-[calc(100vh-60px)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <div className="p-4">
+                <CreatePostForm onPostCreated={handlePostCreated} />
+            </div>
+
             {error && (
                 <div className="bg-red-900/50 border border-red-800 text-red-200 p-3 rounded-lg mb-4">
                     {error}

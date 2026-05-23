@@ -1,6 +1,5 @@
 import { NavLink } from "react-router-dom"
 import logo from "../assets/img/logo.png"
-import { UploadButton } from "./UploadButton"
 
 
 export const SideBar = () => {
@@ -56,8 +55,6 @@ export const SideBar = () => {
                         <i className={`${datos.className} text-xl`}></i>
                     </NavLink>
                 ))}
-
-                <UploadButton />
             </div>
         </nav>
     )
