@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 
@@ -15,37 +15,30 @@ import { Busqueda } from './pages/BusquedaPage'
 
 import { Login } from './pages/Login'
 import RegisterPage from './pages/RegisterPage'
+import ProtectedRoute from './components/ProtectedRoute'
+
+const pagesOrder = {
+    "/login": 0,
+    "/register": 1,
+    "/": 2
+};
 
 function App() {
     const location = useLocation();
-
-    // 1. Estado para la dirección de la animación
     const [direction, setDirection] = useState(0);
-    // 2. Estado para saber de dónde venimos
-    const [prevPath, setPrevPath] = useState(location.pathname);
-
-    
-    const pagesOrder = {
-        "/login": 0,
-        "/register": 1,
-        
-        "/": 2
-    };
+    const prevPathRef = useRef(location.pathname);
 
     useEffect(() => {
-        
         const currentOrder = pagesOrder[location.pathname] ?? 0;
-        const prevOrder = pagesOrder[prevPath] ?? 0;
+        const prevOrder = pagesOrder[prevPathRef.current] ?? 0;
 
-        // Actualizamos la dirección
         if (currentOrder > prevOrder) {
-            setDirection(1); 
+            setDirection(1);
         } else if (currentOrder < prevOrder) {
-            setDirection(-1); 
+            setDirection(-1);
         }
 
-        // Guardamos la ruta actual para la próxima vez
-        setPrevPath(location.pathname);
+        prevPathRef.current = location.pathname;
     }, [location.pathname]);
 
     return (
@@ -63,7 +56,7 @@ function App() {
                         path='/register'
                         element={<RegisterPage direction={direction} />}
                     />
-
+                    <Route element={<ProtectedRoute />}>
                     {/* === ZONA APLICACIÓN (Con Barra de Navegación) === */}
                     <Route element={<Layout />}>
                         <Route path='/' element={<FeedPage />} />
@@ -71,8 +64,10 @@ function App() {
                         <Route path='/explorar' element={<ExplorarPage />} />
                         <Route path='/busqueda' element={<Busqueda />} />
                         <Route path='/profile' element={<Profile />} />
+                        <Route path='/profile/:id' element={<Profile />} />
                     </Route>
 
+                    </Route>
                 </Routes>
             </AnimatePresence>
         </div>
