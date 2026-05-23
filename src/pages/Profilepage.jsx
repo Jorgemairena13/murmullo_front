@@ -2,11 +2,11 @@ import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getUserProfile, getUserPosts, followUser, unfollowUser } from "../services/postService";
+import { BASE_URL } from "../services/client";
 
 export const Profile = () => {
     const { user: currentUser, logout, isLoading } = useAuth();
     const { id } = useParams();
-    const LARAVEL_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || "http://localhost:8000";
 
     const [profileUser, setProfileUser] = useState(null);
     const [posts, setPosts] = useState([]);
@@ -54,7 +54,7 @@ export const Profile = () => {
 
     const getAvatar = (userData) => {
         if (userData?.avatar_url) {
-            return userData.avatar_url.startsWith('http') ? userData.avatar_url : `${LARAVEL_URL}${userData.avatar_url}`;
+            return userData.avatar_url.startsWith('http') ? userData.avatar_url : `${BASE_URL}${userData.avatar_url}`;
         }
         return `https://ui-avatars.com/api/?name=${userData?.name || 'U'}&background=random&color=fff&size=128`;
     };
@@ -121,7 +121,7 @@ export const Profile = () => {
                     <div key={post.id} className="aspect-square bg-gray-800">
                         {post.imagen_url ? (
                             <img 
-                                src={post.imagen_url.startsWith('http') ? post.imagen_url : `${LARAVEL_URL}${post.imagen_url}`}
+                                src={post.imagen_url.startsWith('http') ? post.imagen_url : `${BASE_URL}${post.imagen_url}`}
                                 alt="post" 
                                 className="w-full h-full object-cover"
                             />
