@@ -10,6 +10,14 @@ export const createPost = async (texto) => {
     return response.data;
 };
 
+export const createPostWithImage = async (texto, file) => {
+    const formData = new FormData()
+    formData.append('texto', texto)
+    formData.append('imagen', file)
+    const { data } = await client.post('/posts', formData)
+    return data
+};
+
 export const likePost = async (postId) => {
     const response = await client.post(`/posts/${postId}/like`);
     return response.data;

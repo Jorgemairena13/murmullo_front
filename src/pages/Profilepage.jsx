@@ -24,7 +24,8 @@ export const Profile = () => {
                 const postsData = await getUserPosts(userId);
                 console.log('User posts:', postsData);
                 const postsArray = postsData.posts?.data || postsData.posts || postsData.data || [];
-                setPosts(postsArray);
+                const sorted = [...postsArray].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                setPosts(sorted);
             } catch (err) {
                 console.error('Error loading profile:', err);
             } finally {
@@ -118,9 +119,9 @@ export const Profile = () => {
             <div className="grid grid-cols-3 gap-1">
                 {posts.map(post => (
                     <div key={post.id} className="aspect-square bg-gray-800">
-                        {post.imagen ? (
+                        {post.imagen_url ? (
                             <img 
-                                src={post.imagen.startsWith('http') ? post.imagen : `${LARAVEL_URL}${post.imagen}`}
+                                src={post.imagen_url.startsWith('http') ? post.imagen_url : `${LARAVEL_URL}${post.imagen_url}`}
                                 alt="post" 
                                 className="w-full h-full object-cover"
                             />
