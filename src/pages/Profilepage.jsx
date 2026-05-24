@@ -56,7 +56,7 @@ export const Profile = () => {
         if (userData?.avatar_url) {
             return userData.avatar_url.startsWith('http') ? userData.avatar_url : `${BASE_URL}${userData.avatar_url}`;
         }
-        return `https://ui-avatars.com/api/?name=${userData?.name || 'U'}&background=random&color=fff&size=128`;
+        return `https://ui-avatars.com/api/?name=${userData?.nombre || 'U'}&background=random&color=fff&size=128`;
     };
 
     if (isLoading || loading) return <div className="text-white text-center mt-20 flex justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div></div>;
@@ -73,7 +73,7 @@ export const Profile = () => {
                         className="w-20 h-20 rounded-full object-cover border-2 border-gray-700"
                     />
                     <div className="flex-1">
-                        <h1 className="text-xl font-bold text-white">{profileUser.name}</h1>
+                        <h1 className="text-xl font-bold text-white">{profileUser.nombre}</h1>
                         <p className="text-gray-400">@{profileUser.username}</p>
                     </div>
                     

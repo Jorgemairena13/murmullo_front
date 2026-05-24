@@ -42,7 +42,7 @@ export const CommentList = ({ comments, onCommentDeleted }) => {
                     </div>
                     <div className="flex-1 min-w-0">
                         <span className="font-semibold text-white text-xs">
-                            {comment.user?.email?.split('@')[0] || 'usuario'}
+                            {comment.user?.username || 'usuario'}
                         </span>
                         <span className="text-gray-300 ml-1 break-words">
                             {comment.texto}
