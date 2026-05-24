@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { searchUsers, followUser, unfollowUser } from '../services/postService';
+import { BASE_URL } from '../services/client';
 
 export const Busqueda = () => {
     const [query, setQuery] = useState('');
@@ -86,7 +87,7 @@ export const Busqueda = () => {
                                 <Link to={`/profile/${user.id}`} className="flex items-center gap-4 flex-1 min-w-0">
                                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold shrink-0">
                                         {user.avatar_url ? (
-                                            <img src={user.avatar_url} alt={user.name} className="w-full h-full rounded-full object-cover" />
+                                            <img src={user.avatar_url.startsWith('http') ? user.avatar_url : `${BASE_URL}${user.avatar_url}`} alt={user.name} className="w-full h-full rounded-full object-cover" />
                                         ) : (
                                             user.name?.charAt(0).toUpperCase() || 'U'
                                         )}
