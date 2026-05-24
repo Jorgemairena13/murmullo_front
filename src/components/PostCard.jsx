@@ -70,7 +70,7 @@ export const PostCard = ({ post, onLike }) => {
                 <div className="flex items-center gap-2 mb-2">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-xs">
                         {user?.avatar_url ? (
-                            <img src={user.avatar_url} alt="avatar" className="w-full h-full rounded-full object-cover" />
+                            <img src={user.avatar_url.startsWith('http') ? user.avatar_url : `${BASE_URL}${user.avatar_url}`} alt="avatar" className="w-full h-full rounded-full object-cover" />
                         ) : (
                             user?.nombre?.charAt(0).toUpperCase() || 'U'
                         )}
@@ -79,7 +79,7 @@ export const PostCard = ({ post, onLike }) => {
                         {user?.nombre || 'Usuario'}
                     </span>
                     <span className="text-gray-500 text-xs">
-                        @{user?.email?.split('@')[0] || 'usuario'}
+                        @{user?.username || 'usuario'}
                     </span>
                 </div>
                 
