@@ -1,6 +1,7 @@
 import client from './client';
 
 export const updateProfile = async (userId, formData) => {
+    formData.append('_method', 'PUT');
     const response = await client.post(`/users/${userId}`, formData);
     return response.data;
 };

@@ -9,6 +9,7 @@ export const EditProfileModal = ({ isOpen, onClose, onUpdate }) => {
 
     const [formData, setFormData] = useState({
         nombre: '',
+        username: '',
         email: '',
         bio: '',
         is_private: false,
@@ -26,6 +27,7 @@ export const EditProfileModal = ({ isOpen, onClose, onUpdate }) => {
         if (isOpen && user) {
             setFormData({
                 nombre: user.nombre || '',
+                username: user.username || '',
                 email: user.email || '',
                 bio: user.bio || '',
                 is_private: user.is_private || false,
@@ -66,6 +68,7 @@ export const EditProfileModal = ({ isOpen, onClose, onUpdate }) => {
 
         const dataToSend = new FormData();
         dataToSend.append('nombre', formData.nombre);
+        dataToSend.append('username', formData.username);
         dataToSend.append('email', formData.email);
         dataToSend.append('bio', formData.bio);
         dataToSend.append('is_private', formData.is_private ? 1 : 0);
@@ -172,6 +175,21 @@ export const EditProfileModal = ({ isOpen, onClose, onUpdate }) => {
                             {errors.nombre && <p className="text-red-400 text-xs mt-1 ml-1">{errors.nombre[0]}</p>}
                         </div>
 
+                        <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-1 pl-1">Username</label>
+                            <input
+                                type="text"
+                                name="username"
+                                value={formData.username}
+                                onChange={handleChange}
+                                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                                required
+                            />
+                            {errors.username && <p className="text-red-400 text-xs mt-1 ml-1">{errors.username[0]}</p>}
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-1 pl-1">Email</label>
                             <input
