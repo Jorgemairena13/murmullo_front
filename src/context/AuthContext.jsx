@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, useEffect, useRef } from "react";
 import client from "../services/client";
+import { logout as logoutRequest } from "../services/auth";
 
 
 const AuthContext = createContext();
@@ -22,7 +23,12 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("token", token)
     }
 
-    const logout = () => {
+    const logout = async () => {
+        try {
+            await logoutRequest();
+        } catch (error) {
+            console.error('Error al cerrar sesión en el servidor:', error);
+        }
         setUser(null)
         setToken(null)
         setIsAuthenticated(false)
