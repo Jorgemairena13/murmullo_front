@@ -23,6 +23,10 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("token", token)
     }
 
+    const updateUser = (userData) => {
+        setUser(userData)
+    }
+
     const logout = async () => {
         try {
             await logoutRequest();
@@ -63,6 +67,7 @@ export const AuthProvider = ({ children }) => {
             autentificado,
             login,
             logout,
+            updateUser,
             loading
         }}>
             {children}
