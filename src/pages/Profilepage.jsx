@@ -1,16 +1,20 @@
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getUserProfile, getUserPosts, followUser, unfollowUser } from "../services/postService";
+import { deleteAccount } from "../services/userService";
+import { EditProfileModal } from "../components/EditProfileModal";
 import { BASE_URL } from "../services/client";
 
 export const Profile = () => {
-    const { user: currentUser, logout, isLoading } = useAuth();
+    const { user: currentUser, logout, updateUser, isLoading } = useAuth();
     const { id } = useParams();
+    const navigate = useNavigate();
 
     const [profileUser, setProfileUser] = useState(null);
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const userId = id || currentUser?.id;
 
     useEffect(() => {
@@ -47,6 +51,25 @@ export const Profile = () => {
             }
         } catch (err) {
             console.error('Follow error:', err);
+        }
+    };
+
+    const handleDeleteAccount = async () => {
+        if (!window.confirm('¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.')) return;
+        try {
+            await deleteAccount(userId);
+            await logout();
+            navigate('/login', { replace: true });
+        } catch (err) {
+            console.error('Error deleting account:', err);
+            alert('Error al eliminar la cuenta. Intenta de nuevo.');
+        }
+    };
+
+    const handleProfileUpdate = (updatedUserData) => {
+        setProfileUser(prev => ({ ...prev, ...updatedUserData }));
+        if (isOwnProfile) {
+            updateUser({ ...currentUser, ...updatedUserData });
         }
     };
 
@@ -91,16 +114,24 @@ export const Profile = () => {
                     )}
                     
                     {isOwnProfile && (
-                        <button 
-                            onClick={logout}
-                            className="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm hover:bg-gray-600"
-                        >
-                            Cerrar Sesión
-                        </button>
+                        <div className="flex gap-2">
+                            <button 
+                                onClick={() => setIsEditModalOpen(true)}
+                                className="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm hover:bg-gray-600 transition-colors"
+                            >
+                                Editar Perfil
+                            </button>
+                            <button 
+                                onClick={logout}
+                                className="px-4 py-2 bg-gray-700 text-white rounded-lg text-sm hover:bg-gray-600 transition-colors"
+                            >
+                                Cerrar Sesión
+                            </button>
+                        </div>
                     )}
                 </div>
 
-                <div className="flex justify-around text-center mb-6">
+                <div className="flex justify-around text-center mb-4">
                     <div>
                         <span className="block text-xl font-bold text-white">{posts.length}</span>
                         <span className="text-sm text-gray-400">Publicaciones</span>
@@ -114,6 +145,21 @@ export const Profile = () => {
                         <span className="text-sm text-gray-400">Siguiendo</span>
                     </div>
                 </div>
+
+                {profileUser.bio && (
+                    <p className="text-gray-300 text-sm mb-4 px-4">{profileUser.bio}</p>
+                )}
+
+                {isOwnProfile && (
+                    <div className="px-4 mb-4">
+                        <button
+                            onClick={handleDeleteAccount}
+                            className="text-red-400 hover:text-red-300 text-sm transition-colors"
+                        >
+                            Eliminar cuenta
+                        </button>
+                    </div>
+                )}
             </div>
 
             <div className="grid grid-cols-3 gap-1">
@@ -139,6 +185,12 @@ export const Profile = () => {
                     No hay publicaciones aún
                 </div>
             )}
+
+            <EditProfileModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                onUpdate={handleProfileUpdate}
+            />
         </div>
     );
 };
