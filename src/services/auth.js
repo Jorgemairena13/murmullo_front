@@ -8,7 +8,7 @@ export const login = async (credenciales) => {
 }
 // Registro
 export const register = async (datosUsuario) => {
-    const respuesta = await client.post('register',datosUsuario)
+    const respuesta = await client.post('/register',datosUsuario)
     return respuesta.data
 }
 
