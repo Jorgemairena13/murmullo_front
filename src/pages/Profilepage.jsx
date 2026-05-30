@@ -85,7 +85,7 @@ export const Profile = () => {
         return null;
     };
 
-    if (!isLoading && currentUser && !id) {
+    if (!isLoading && currentUser?.id && !id) {
         return <Navigate to={`/profile/${currentUser.id}`} replace />;
     }
 
