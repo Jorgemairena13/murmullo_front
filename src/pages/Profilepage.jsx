@@ -15,6 +15,7 @@ export const Profile = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [imgErrors, setImgErrors] = useState({});
     const userId = id || currentUser?.id;
 
     useEffect(() => {
@@ -75,11 +76,13 @@ export const Profile = () => {
 
     const isOwnProfile = !id || id == currentUser?.id;
 
+    const [avatarError, setAvatarError] = useState(false);
+
     const getAvatar = (userData) => {
         if (userData?.avatar_url) {
-            return userData.avatar_url.startsWith('http') ? userData.avatar_url : `${BASE_URL}${userData.avatar_url}`;
+            return userData.avatar_url.startsWith('http') ? userData.avatar_url : `${BASE_URL}/${userData.avatar_url}`;
         }
-        return `https://ui-avatars.com/api/?name=${userData?.nombre || 'U'}&background=random&color=fff&size=128`;
+        return null;
     };
 
     if (isLoading || loading) return <div className="text-white text-center mt-20 flex justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div></div>;
@@ -90,11 +93,18 @@ export const Profile = () => {
         <div className="max-w-xl mx-auto">
             <div className="p-4">
                 <div className="flex items-center gap-4 mb-6">
-                    <img 
-                        src={getAvatar(profileUser)} 
-                        alt="Avatar"
-                        className="w-20 h-20 rounded-full object-cover border-2 border-gray-700"
-                    />
+                    {getAvatar(profileUser) && !avatarError ? (
+                        <img 
+                            src={getAvatar(profileUser)} 
+                            alt="Avatar"
+                            className="w-20 h-20 rounded-full object-cover border-2 border-gray-700"
+                            onError={() => setAvatarError(true)}
+                        />
+                    ) : (
+                        <div className="w-20 h-20 rounded-full border-2 border-gray-700 bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center text-white text-2xl font-bold">
+                            {profileUser.nombre?.charAt(0)?.toUpperCase() || 'U'}
+                        </div>
+                    )}
                     <div className="flex-1">
                         <h1 className="text-xl font-bold text-white">{profileUser.nombre}</h1>
                         <p className="text-gray-400">@{profileUser.username}</p>
@@ -163,21 +173,29 @@ export const Profile = () => {
             </div>
 
             <div className="grid grid-cols-3 gap-1">
-                {posts.map(post => (
-                    <div key={post.id} className="aspect-square bg-gray-800">
-                        {post.imagen_url ? (
-                            <img 
-                                src={post.imagen_url.startsWith('http') ? post.imagen_url : `${BASE_URL}${post.imagen_url}`}
-                                alt="post" 
-                                className="w-full h-full object-cover"
-                            />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
-                                {post.texto?.substring(0, 20)}...
-                            </div>
-                        )}
-                    </div>
-                ))}
+                {posts.map(post => {
+                    const postImgUrl = post.imagen_url
+                        ? (post.imagen_url.startsWith('http') ? post.imagen_url : `${BASE_URL}/${post.imagen_url}`)
+                        : null;
+                    const isError = imgErrors[post.id];
+
+                    return (
+                        <div key={post.id} className="aspect-square bg-gray-800">
+                            {postImgUrl && !isError ? (
+                                <img 
+                                    src={postImgUrl}
+                                    alt="post" 
+                                    className="w-full h-full object-cover"
+                                    onError={() => setImgErrors(prev => ({ ...prev, [post.id]: true }))}
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
+                                    {post.texto?.substring(0, 20) || 'Sin texto'}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
             </div>
             
             {posts.length === 0 && (

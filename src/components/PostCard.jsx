@@ -49,12 +49,16 @@ export const PostCard = ({ post, onLike }) => {
         setPostComments(prev => prev.filter(c => c.id !== commentId));
     };
 
+    const [imgError, setImgError] = useState(false);
+
     const getImageUrl = () => {
         if (imagen_url) {
-            return imagen_url.startsWith('http') ? imagen_url : `${BASE_URL}${imagen_url}`;
+            return imagen_url.startsWith('http') ? imagen_url : `${BASE_URL}/${imagen_url}`;
         }
-        return 'https://via.placeholder.com/600x600/1a1a2e/4a4a6a?text=Murmullo';
+        return null;
     };
+
+    const imageUrl = getImageUrl();
 
     return (
         <div className="bg-gray-900 border-b border-gray-800">
