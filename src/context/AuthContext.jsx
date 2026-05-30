@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
             }
             try {
                 const { data } = await client.get('/user')
-                setUser(data)
+                setUser(data.usuario || data)
                 setIsAuthenticated(true)
             } catch (error) {
                 console.error('Token invalidado o error al obtener el usuario:', error)
