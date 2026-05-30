@@ -1,8 +1,11 @@
 import { NavLink } from "react-router-dom"
 import logo from "../assets/img/logo.png"
+import { useAuth } from "../context/AuthContext"
 
 
 export const SideBar = () => {
+    const { user } = useAuth();
+
     const datosLink = [
         {
             className: 'fi fi-rr-home',
@@ -22,7 +25,7 @@ export const SideBar = () => {
         {
             className: 'fi fi-rr-user',
             text: 'Perfil',
-            route: '/profile'
+            route: user ? `/profile/${user.id}` : '/profile'
         },
     ]
 

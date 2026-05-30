@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect, useRef } from "react";
+import { createContext, useState, useContext, useEffect, useRef, useMemo } from "react";
 import client from "../services/client";
 import { logout as logoutRequest } from "../services/auth";
 
@@ -60,16 +60,18 @@ export const AuthProvider = ({ children }) => {
         checkAuth()
     }, [])
 
+    const value = useMemo(() => ({
+        user,
+        token,
+        autentificado,
+        login,
+        logout,
+        updateUser,
+        loading
+    }), [user, token, autentificado, loading]);
+
     return (
-        <AuthContext.Provider value={{
-            user,
-            token,
-            autentificado,
-            login,
-            logout,
-            updateUser,
-            loading
-        }}>
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     )

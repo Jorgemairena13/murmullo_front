@@ -19,6 +19,12 @@ export const Profile = () => {
     const userId = id || currentUser?.id;
 
     useEffect(() => {
+        if (!isLoading && currentUser && !id) {
+            navigate(`/profile/${currentUser.id}`, { replace: true });
+        }
+    }, [isLoading, currentUser, id, navigate]);
+
+    useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
