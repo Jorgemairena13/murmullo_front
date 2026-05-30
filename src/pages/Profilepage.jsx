@@ -1,6 +1,6 @@
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Navigate } from "react-router-dom";
 import { getUserProfile, getUserPosts, followUser, unfollowUser } from "../services/postService";
 import { deleteAccount } from "../services/userService";
 import { EditProfileModal } from "../components/EditProfileModal";
@@ -17,12 +17,6 @@ export const Profile = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [imgErrors, setImgErrors] = useState({});
     const userId = id || currentUser?.id;
-
-    useEffect(() => {
-        if (!isLoading && currentUser && !id) {
-            navigate(`/profile/${currentUser.id}`, { replace: true });
-        }
-    }, [isLoading, currentUser, id, navigate]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -44,8 +38,8 @@ export const Profile = () => {
             }
         };
 
-        if (userId) fetchData();
-    }, [userId]);
+        if (userId && !isLoading) fetchData();
+    }, [userId, isLoading]);
 
     const handleFollow = async () => {
         try {
@@ -90,6 +84,10 @@ export const Profile = () => {
         }
         return null;
     };
+
+    if (!isLoading && currentUser && !id) {
+        return <Navigate to={`/profile/${currentUser.id}`} replace />;
+    }
 
     if (isLoading || loading) return <div className="text-white text-center mt-20 flex justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div></div>;
 
