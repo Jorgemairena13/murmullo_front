@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import client from "../services/client";
+import { register as registerService } from "../services/auth";
 import { Link, useNavigate } from "react-router-dom";
 import logo from '../assets/img/logo.png'
 import Transition from "../components/Transition";
@@ -11,6 +11,7 @@ export default function RegisterPage({direction}) {
 
     const [formData, setFormData] = useState({
         nombre: "",
+        username: "",
         email: "",
         bio: "",
         is_private: false,
@@ -42,6 +43,7 @@ export default function RegisterPage({direction}) {
 
         const dataToSend = new FormData();
         dataToSend.append('nombre', formData.nombre);
+        dataToSend.append('username', formData.username);
         dataToSend.append('email', formData.email);
         dataToSend.append('bio', formData.bio);
         dataToSend.append('is_private', formData.is_private ? 1 : 0);
@@ -53,10 +55,10 @@ export default function RegisterPage({direction}) {
         }
 
         try {
-            const res = await client.post("/register", dataToSend);
+            const data = await registerService(dataToSend);
 
-            if (res.data.token) {
-                login(res.data.user, res.data.token);
+            if (data.token) {
+                login(data.user, data.token);
                 navigate("/");
             } else {
                 navigate("/login");
@@ -101,8 +103,8 @@ export default function RegisterPage({direction}) {
 
                     <form onSubmit={handleSubmit} className="space-y-5" encType="multipart/form-data">
 
-                        {/* GRUPO 1: Nombre y Email */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* GRUPO 1: Nombre, Username y Email */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             {/* Nombre */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-1 pl-1">Nombre</label>
@@ -116,6 +118,21 @@ export default function RegisterPage({direction}) {
                                     required
                                 />
                                 {errors.nombre && <p className="text-red-400 text-xs mt-1 ml-1">{errors.nombre[0]}</p>}
+                            </div>
+
+                            {/* Username */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-1 pl-1">Username</label>
+                                <input
+                                    type="text"
+                                    name="username"
+                                    placeholder="@usuario"
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                                    required
+                                />
+                                {errors.username && <p className="text-red-400 text-xs mt-1 ml-1">{errors.username[0]}</p>}
                             </div>
 
                             {/* Email */}
@@ -144,7 +161,6 @@ export default function RegisterPage({direction}) {
                                 maxLength={500}
                                 className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all resize-none h-24"
                                 placeholder="Cuéntanos algo breve sobre ti..."
-                                required
                             />
                             {errors.bio && <p className="text-red-400 text-xs mt-1 ml-1">{errors.bio[0]}</p>}
                         </div>
@@ -159,7 +175,6 @@ export default function RegisterPage({direction}) {
                                     onChange={handleChange}
                                     accept="image/*"
                                     className="block w-full text-sm text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer bg-gray-800/50 rounded-xl border border-gray-700 focus:outline-none transition-all"
-                                    required
                                 />
                             </div>
                             {errors.avatar && <p className="text-red-400 text-xs mt-1 ml-1">{errors.avatar[0]}</p>}

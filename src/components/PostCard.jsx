@@ -8,38 +8,24 @@ export const PostCard = ({ post, onLike }) => {
     const { id, texto, imagen_url, is_liked = false, user, comments = [], comments_count = 0 } = post;
     const [showComments, setShowComments] = useState(false);
     const [postComments, setPostComments] = useState(comments);
-    const [loadingComments, setLoadingComments] = useState(false);
 
     const handleLike = (e) => {
         e.stopPropagation();
         if (onLike) onLike(id, is_liked);
     };
 
-    const handleCommentClick = async (e) => {
+    const handleCommentClick = (e) => {
         e.stopPropagation();
-        if (!showComments && postComments.length === 0 && comments_count > 0) {
-            setLoadingComments(true);
-            try {
-                const fetchedComments = await getComments(id);
-                setPostComments(Array.isArray(fetchedComments) ? fetchedComments : fetchedComments.data || []);
-            } catch (err) {
-                console.error('Error loading comments:', err);
-            } finally {
-                setLoadingComments(false);
-            }
-        }
-        setShowComments(!showComments);
+        setShowComments(prev => !prev);
     };
 
     useEffect(() => {
         if (showComments && postComments.length === 0 && comments_count > 0) {
-            setLoadingComments(true);
             getComments(id)
                 .then(data => setPostComments(Array.isArray(data) ? data : data.data || []))
-                .catch(err => console.error('Error loading comments:', err))
-                .finally(() => setLoadingComments(false));
+                .catch(err => console.error('Error loading comments:', err));
         }
-    }, [showComments]);
+    }, [showComments, id, comments_count]);
 
     const handleCommentCreated = (newComment) => {
         setPostComments(prev => [newComment, ...prev]);

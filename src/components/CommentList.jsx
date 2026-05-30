@@ -1,5 +1,6 @@
 import { useAuth } from '../context/AuthContext';
 import { deleteComment } from '../services/commentService';
+import { BASE_URL } from '../services/client';
 
 export const CommentList = ({ comments, onCommentDeleted }) => {
     const { user: currentUser } = useAuth();
@@ -32,7 +33,7 @@ export const CommentList = ({ comments, onCommentDeleted }) => {
                     <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
                         {comment.user?.avatar_url ? (
                             <img 
-                                src={comment.user.avatar_url} 
+                                src={comment.user.avatar_url.startsWith('http') ? comment.user.avatar_url : `${BASE_URL}${comment.user.avatar_url}`} 
                                 alt={comment.user.nombre} 
                                 className="w-full h-full rounded-full object-cover" 
                             />

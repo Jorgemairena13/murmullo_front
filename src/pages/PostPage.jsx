@@ -56,7 +56,7 @@ export const PostPage = () => {
             };
             loadComments();
         }
-    }, [showComments, postId]);
+    }, [showComments, postId, comments.length]);
 
     const handleCommentCreated = (newComment) => {
         setComments(prev => [newComment, ...prev]);
