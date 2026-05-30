@@ -10,6 +10,7 @@ import { FeedPage } from './pages/FeedPage'
 import { ExplorarPage } from './pages/ExplorarPage'
 import { Profile } from './pages/Profilepage'
 import { Busqueda } from './pages/BusquedaPage'
+import { PostPage } from './pages/PostPage'
 
 // Páginas de Autenticación
 
@@ -65,6 +66,7 @@ function App() {
                         <Route path='/busqueda' element={<Busqueda />} />
                         <Route path='/profile' element={<Profile />} />
                         <Route path='/profile/:id' element={<Profile />} />
+                        <Route path='/post/:postId' element={<PostPage />} />
                     </Route>
 
                     </Route>
