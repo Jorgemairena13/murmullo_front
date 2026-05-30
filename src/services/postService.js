@@ -57,3 +57,13 @@ export const searchPosts = async (query) => {
     const response = await client.get(`/search/posts?query=${encodeURIComponent(query)}`);
     return response.data;
 };
+
+export const getExplorarPosts = async (page = 1) => {
+    const response = await client.get(`/explorar?page=${page}`);
+    return response.data;
+};
+
+export const getPost = async (postId) => {
+    const response = await client.get(`/posts/${postId}`);
+    return response.data;
+};
