@@ -1,7 +1,16 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { getExplorarPosts } from '../services/postService';
+import { Skeleton } from '../components/Skeleton';
 import { BASE_URL } from '../services/client';
+
+const GridSkeleton = () => (
+    <div className="grid grid-cols-3 gap-1">
+        {Array.from({ length: 9 }).map((_, i) => (
+            <Skeleton key={i} className="aspect-square" />
+        ))}
+    </div>
+);
 
 export const ExplorarPage = () => {
     const [posts, setPosts] = useState([]);
@@ -69,8 +78,9 @@ export const ExplorarPage = () => {
 
     if (loading) {
         return (
-            <div className="h-screen flex items-center justify-center bg-black">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500" />
+            <div className="h-screen overflow-y-auto bg-black p-4">
+                <Skeleton className="h-7 w-32 rounded mb-4" />
+                <GridSkeleton />
             </div>
         );
     }
@@ -78,6 +88,9 @@ export const ExplorarPage = () => {
     if (error && posts.length === 0) {
         return (
             <div className="h-screen flex flex-col items-center justify-center bg-black text-white gap-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-14 w-14 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                </svg>
                 <p className="text-gray-400">{error}</p>
                 <button onClick={() => { setPage(1); setInitialLoad(true); fetchPosts(1); }}
                     className="px-4 py-2 bg-purple-600 rounded-lg text-sm hover:bg-purple-500 transition-colors">
@@ -89,8 +102,11 @@ export const ExplorarPage = () => {
 
     if (posts.length === 0) {
         return (
-            <div className="h-screen flex items-center justify-center bg-black">
-                <p className="text-gray-500">No hay publicaciones de cuentas públicas aún</p>
+            <div className="h-screen flex flex-col items-center justify-center bg-black text-center gap-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
+                </svg>
+                <p className="text-gray-500 font-medium">No hay publicaciones de cuentas públicas aún</p>
             </div>
         );
     }

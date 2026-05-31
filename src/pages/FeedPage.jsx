@@ -1,7 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
 import { PostCard } from '../components/PostCard';
 import { CreatePostForm } from '../components/CreatePostForm';
+import { Skeleton } from '../components/Skeleton';
 import { getFeed, likePost, unlikePost } from '../services/postService';
+
+const PostCardSkeleton = () => (
+    <div className="bg-gray-900 border-b border-gray-800 p-4">
+        <div className="flex items-center gap-2 mb-3">
+            <Skeleton className="w-8 h-8 rounded-full" />
+            <Skeleton className="h-4 w-32 rounded" />
+        </div>
+        <Skeleton className="w-full aspect-square rounded-lg mb-3" />
+        <div className="flex gap-6 mb-2">
+            <Skeleton className="h-7 w-7 rounded" />
+            <Skeleton className="h-7 w-7 rounded" />
+        </div>
+        <Skeleton className="h-4 w-48 rounded" />
+    </div>
+);
 
 export const FeedPage = () => {
     const [posts, setPosts] = useState([]);
@@ -9,6 +25,8 @@ export const FeedPage = () => {
     const [error, setError] = useState(null);
     const [pullDistance, setPullDistance] = useState(0);
     const [refreshing, setRefreshing] = useState(false);
+    const [deleteError, setDeleteError] = useState(null);
+    const [exitingIds, setExitingIds] = useState(new Set());
     const containerRef = useRef(null);
     const touchStartY = useRef(0);
 
@@ -60,11 +78,20 @@ export const FeedPage = () => {
     };
 
     const handlePostCreated = (newPost) => {
-        setPosts(prev => [newPost, ...prev]);
+        setPosts(prev => [{ ...newPost, _isNew: true }, ...prev]);
+        setTimeout(() => setPosts(prev => prev.map(p => p.id === newPost.id ? { ...p, _isNew: false } : p)), 500);
     };
 
     const handleDelete = (postId) => {
-        setPosts(prev => prev.filter(p => p.id !== postId));
+        setExitingIds(prev => new Set(prev).add(postId));
+        setTimeout(() => {
+            setPosts(prev => prev.filter(p => p.id !== postId));
+            setExitingIds(prev => {
+                const next = new Set(prev);
+                next.delete(postId);
+                return next;
+            });
+        }, 300);
     };
 
     const handleTouchStart = (e) => {
@@ -134,18 +161,32 @@ export const FeedPage = () => {
             </div>
 
             {error && (
-                <div className="mx-4 bg-red-900/30 border border-red-800/50 text-red-300 p-4 rounded-xl mb-4 text-sm">
-                    {error}
+                <div className="mx-4 bg-red-900/30 border border-red-800/50 text-red-300 p-4 rounded-xl mb-4 text-sm flex items-center gap-3">
+                    <span className="flex-1">{error}</span>
+                    <button onClick={fetchFeed} className="text-purple-400 hover:text-purple-300 font-medium transition-colors shrink-0">
+                        Reintentar
+                    </button>
+                </div>
+            )}
+
+            {deleteError && (
+                <div className="mx-4 bg-red-900/30 border border-red-800/50 text-red-300 p-3 rounded-xl mb-4 text-xs flex items-center gap-2">
+                    <span className="flex-1">{deleteError}</span>
+                    <button onClick={() => setDeleteError(null)} className="text-gray-400 hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
                 </div>
             )}
             
             {loading ? (
-                <div className="flex items-center justify-center h-64">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+                <div className="mt-2">
+                    {[1, 2, 3].map(i => <PostCardSkeleton key={i} />)}
                 </div>
             ) : posts.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-700 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-800 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                     </svg>
                     <p className="text-gray-500 font-medium">No hay posts todavía</p>
@@ -154,7 +195,20 @@ export const FeedPage = () => {
             ) : (
                 <div className="mt-2">
                     {posts.map(post => (
-                        <PostCard key={post.id} post={post} onLike={handleLike} onDelete={handleDelete} />
+                        <div
+                            key={post.id}
+                            className={`transition-all duration-300 ${
+                                exitingIds.has(post.id) ? 'opacity-0 scale-95' : ''
+                            } ${post._isNew ? 'animate-fadeInDown' : ''}`}
+                            style={post._isNew ? { animation: 'fadeInDown 0.3s ease-out' } : undefined}
+                        >
+                            <PostCard
+                                post={post}
+                                onLike={handleLike}
+                                onDelete={handleDelete}
+                                onDeleteError={(msg) => setDeleteError(msg)}
+                            />
+                        </div>
                     ))}
                 </div>
             )}

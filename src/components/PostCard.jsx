@@ -7,12 +7,13 @@ import { getComments } from '../services/commentService';
 import { deletePost } from '../services/postService';
 import { BASE_URL } from '../services/client';
 
-export const PostCard = ({ post, onLike, onDelete }) => {
+export const PostCard = ({ post, onLike, onDelete, onDeleteError }) => {
     const { user: currentUser } = useAuth();
     const { id, texto, imagen_url, is_liked = false, user, comments = [], comments_count = 0 } = post;
     const [showComments, setShowComments] = useState(false);
     const [postComments, setPostComments] = useState(comments);
     const [deleting, setDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState(null);
 
     const isOwner = currentUser?.id === user?.id;
 
@@ -36,7 +37,8 @@ export const PostCard = ({ post, onLike, onDelete }) => {
             if (onDelete) onDelete(id);
         } catch (err) {
             console.error('Error deleting post:', err);
-            alert('Error al eliminar el post');
+            setDeleteError('Error al eliminar');
+            if (onDeleteError) onDeleteError('Error al eliminar el post');
         } finally {
             setDeleting(false);
         }
@@ -133,7 +135,7 @@ export const PostCard = ({ post, onLike, onDelete }) => {
                 <div className="flex items-center gap-6 mt-3">
                     <button 
                         onClick={handleLike}
-                        className={`transition-colors ${is_liked ? 'text-red-500' : 'text-white hover:text-red-400'}`}
+                        className={`transition-colors active:scale-75 transition-transform duration-150 ${is_liked ? 'text-red-500' : 'text-white hover:text-red-400'}`}
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 24 24" fill={is_liked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -149,6 +151,10 @@ export const PostCard = ({ post, onLike, onDelete }) => {
                         </svg>
                     </button>
                 </div>
+
+                {deleteError && (
+                    <p className="text-red-400 text-xs mt-1">{deleteError}</p>
+                )}
 
                 {postComments.length > 0 && (
                     <button 

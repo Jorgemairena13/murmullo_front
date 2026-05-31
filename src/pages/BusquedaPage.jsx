@@ -1,21 +1,36 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { searchUsers, followUser, unfollowUser } from '../services/postService';
+import { Skeleton } from '../components/Skeleton';
 import { BASE_URL } from '../services/client';
+
+const UserSkeleton = () => (
+    <div className="flex items-center gap-4 p-4">
+        <Skeleton className="w-12 h-12 rounded-full" />
+        <div className="flex-1 space-y-2">
+            <Skeleton className="h-4 w-40 rounded" />
+            <Skeleton className="h-3 w-24 rounded" />
+        </div>
+        <Skeleton className="w-20 h-8 rounded-full" />
+    </div>
+);
 
 export const Busqueda = () => {
     const [query, setQuery] = useState('');
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const [followingUsers, setFollowingUsers] = useState({});
 
     useEffect(() => {
         const search = async () => {
             if (!query.trim()) {
                 setUsers([]);
+                setError(null);
                 return;
             }
             setLoading(true);
+            setError(null);
             try {
                 const data = await searchUsers(query);
                 const usersList = data.users || data || [];
@@ -25,6 +40,7 @@ export const Busqueda = () => {
                 setFollowingUsers(followState);
             } catch (err) {
                 console.error('Search error:', err);
+                setError('Error al buscar usuarios');
             } finally {
                 setLoading(false);
             }
@@ -71,15 +87,31 @@ export const Busqueda = () => {
                 </div>
             </div>
 
-            {loading && (
-                <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-500"></div>
+            {error && (
+                <div className="mx-4 bg-red-900/30 border border-red-800/50 text-red-300 p-4 rounded-xl mb-4 text-sm flex items-center gap-3">
+                    <span className="flex-1">{error}</span>
+                    <button
+                        onClick={() => setQuery(prev => prev + ' ')}
+                        className="text-purple-400 hover:text-purple-300 font-medium transition-colors shrink-0"
+                    >
+                        Reintentar
+                    </button>
                 </div>
             )}
 
-            {!loading && query && users.length === 0 && (
-                <div className="text-center text-gray-500 py-8">
-                    No se encontraron resultados
+            {loading && (
+                <div className="divide-y divide-gray-800">
+                    {[1, 2, 3].map(i => <UserSkeleton key={i} />)}
+                </div>
+            )}
+
+            {!loading && !error && query && users.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-14 w-14 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <p className="text-gray-500 font-medium">No se encontraron resultados</p>
+                    <p className="text-gray-600 text-sm">Prueba con otro término de búsqueda</p>
                 </div>
             )}
 
@@ -118,9 +150,12 @@ export const Busqueda = () => {
                 </div>
             )}
 
-            {!query && (
-                <div className="text-center text-gray-500 py-8">
-                    <p className="text-sm">Busca usuarios por nombre o @username</p>
+            {!query && !error && (
+                <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-14 w-14 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <p className="text-gray-500">Busca usuarios por nombre o @username</p>
                 </div>
             )}
         </div>
