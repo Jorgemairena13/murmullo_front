@@ -53,7 +53,7 @@ export const Profile = () => {
                 const userData = await getUserProfile(userId);
                 const profile = userData.usuario || userData;
                 setProfileUser(profile);
-                setHasPendingRequest(!!profile.has_pending_request);
+                setHasPendingRequest(!!userData.has_pending_request);
 
                 const postsData = await getUserPosts(userId);
                 const postsArray = postsData.posts?.data || postsData.posts || postsData.data || [];
