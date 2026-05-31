@@ -72,3 +72,10 @@ export const deletePost = async (postId) => {
     const response = await client.delete(`/posts/${postId}`);
     return response.data;
 };
+
+export const generatePostText = async (file) => {
+    const formData = new FormData();
+    formData.append('imagen', file);
+    const { data } = await client.post('/posts/generate-text', formData);
+    return data;
+};
