@@ -2,8 +2,6 @@ import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Navigate, Link } from "react-router-dom";
 import { getUserProfile, getUserPosts, followUser, unfollowUser } from "../services/postService";
-import { deleteAccount } from "../services/userService";
-import { EditProfileModal } from "../components/EditProfileModal";
 import { Skeleton } from "../components/Skeleton";
 import { BASE_URL } from "../services/client";
 
@@ -34,7 +32,7 @@ const ProfileSkeleton = () => (
 );
 
 export const Profile = () => {
-    const { user: currentUser, logout, updateUser, isLoading } = useAuth();
+    const { user: currentUser, isLoading } = useAuth();
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -42,7 +40,6 @@ export const Profile = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [imgErrors, setImgErrors] = useState({});
     const [following, setFollowing] = useState(false);
     const userId = id || currentUser?.id;
@@ -94,24 +91,6 @@ export const Profile = () => {
             }));
         } finally {
             setFollowing(false);
-        }
-    };
-
-    const handleDeleteAccount = async () => {
-        if (!window.confirm('¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.')) return;
-        try {
-            await deleteAccount(userId);
-            await logout();
-            navigate('/login', { replace: true });
-        } catch (err) {
-            console.error('Error deleting account:', err);
-        }
-    };
-
-    const handleProfileUpdate = (updatedUserData) => {
-        setProfileUser(prev => ({ ...prev, ...updatedUserData }));
-        if (isOwnProfile) {
-            updateUser({ ...currentUser, ...updatedUserData });
         }
     };
 
@@ -194,23 +173,6 @@ export const Profile = () => {
                             {following ? '...' : profileUser.is_following ? 'Siguiendo' : 'Seguir'}
                         </button>
                     )}
-                    
-                    {isOwnProfile && (
-                        <div className="flex gap-2">
-                            <button 
-                                onClick={() => setIsEditModalOpen(true)}
-                                className="px-4 py-2 bg-gray-700 text-white rounded-xl text-sm hover:bg-gray-600 transition-colors"
-                            >
-                                Editar Perfil
-                            </button>
-                            <button 
-                                onClick={logout}
-                                className="px-4 py-2 bg-gray-700 text-white rounded-xl text-sm hover:bg-gray-600 transition-colors"
-                            >
-                                Cerrar Sesión
-                            </button>
-                        </div>
-                    )}
                 </div>
 
                 <div className="flex justify-around text-center mb-4">
@@ -229,19 +191,11 @@ export const Profile = () => {
                 </div>
 
                 {profileUser.bio && (
-                    <p className="text-gray-300 text-sm mb-4 px-4">{profileUser.bio}</p>
-                )}
-
-                {isOwnProfile && (
-                    <div className="px-4 mb-4">
-                        <button
-                            onClick={handleDeleteAccount}
-                            className="text-red-400 hover:text-red-300 text-sm transition-colors"
-                        >
-                            Eliminar cuenta
-                        </button>
+                    <div className="border-t border-gray-800 pt-4 mt-2 mb-4 px-4">
+                        <p className="text-gray-300 text-sm">{profileUser.bio}</p>
                     </div>
                 )}
+
             </div>
 
             <div className="grid grid-cols-3 gap-1">
@@ -279,11 +233,6 @@ export const Profile = () => {
                 </div>
             )}
 
-            <EditProfileModal
-                isOpen={isEditModalOpen}
-                onClose={() => setIsEditModalOpen(false)}
-                onUpdate={handleProfileUpdate}
-            />
         </div>
     );
 };
