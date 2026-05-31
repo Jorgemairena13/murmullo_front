@@ -13,6 +13,7 @@ export const Login = ({direction}) => {
         password: ''
     })
     const [showPassword, setShowPassword] = useState(false);
+    const [serverError, setServerError] = useState('');
 
     const handleChange = (e) => {
         setCredenciales({
@@ -24,6 +25,7 @@ export const Login = ({direction}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        setServerError('')
         try {
             console.log('Enviando datos', credenciales)
             const data = await loginService(credenciales);
@@ -33,7 +35,7 @@ export const Login = ({direction}) => {
             navigate('/', { replace: true })
         } catch (error) {
             console.error(error);
-            alert("Error al iniciar sesión. Revisa tus datos.");
+            setServerError("Error al iniciar sesión. Revisa tus datos.");
 
         }
 
@@ -77,6 +79,12 @@ export const Login = ({direction}) => {
                         <p className="hidden lg:block text-gray-400 mb-8">Introduce tus datos para entrar.</p>
 
 
+
+                        {serverError && (
+                            <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-xl mb-6 text-sm text-center">
+                                {serverError}
+                            </div>
+                        )}
 
                         <form onSubmit={handleSubmit} className="space-y-5">
                             {/* EMAIL */}
