@@ -104,8 +104,11 @@ export const PostPage = () => {
     if (!post) {
         return (
             <div className="h-screen flex flex-col items-center justify-center bg-black text-white gap-4">
-                <p className="text-gray-400">Post no encontrado</p>
-                <button onClick={() => navigate(-1)} className="text-purple-400 hover:text-purple-300">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                </svg>
+                <p className="text-gray-500 font-medium">Post no encontrado</p>
+                <button onClick={() => navigate(-1)} className="text-purple-400 hover:text-purple-300 transition-colors">
                     Volver
                 </button>
             </div>
@@ -180,17 +183,16 @@ export const PostPage = () => {
 
                     <div className="p-4 border-b border-gray-800">
                         <div className="flex items-center gap-6">
-                            <button onClick={handleLike} className="flex items-center gap-2 transition-colors">
+                            <button onClick={handleLike} className={`flex items-center gap-2 transition-colors ${post.is_liked ? 'text-red-500' : 'text-white hover:text-red-400'}`}>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 24 24"
                                     fill={post.is_liked ? "currentColor" : "none"}
                                     stroke="currentColor" strokeWidth="2"
-                                    color={post.is_liked ? "#ef4444" : "currentColor"}
                                 >
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                 </svg>
-                                <span className="text-white text-sm">{post.likes_count || 0}</span>
+                                <span className="text-sm">{post.likes_count || 0}</span>
                             </button>
-                            <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-2 text-white hover:text-blue-400 transition-colors">
+                            <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-2 text-white hover:text-purple-400 transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                 </svg>

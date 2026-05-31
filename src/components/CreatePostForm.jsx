@@ -47,7 +47,7 @@ export const CreatePostForm = ({ onPostCreated }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-gray-900 border border-gray-800 rounded-lg p-4">
+        <form onSubmit={handleSubmit} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
             <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}

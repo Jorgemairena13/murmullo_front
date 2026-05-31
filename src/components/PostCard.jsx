@@ -153,7 +153,7 @@ export const PostCard = ({ post, onLike, onDelete }) => {
                 {postComments.length > 0 && (
                     <button 
                         onClick={() => setShowComments(!showComments)}
-                        className="text-gray-400 text-sm mt-2 hover:text-white transition-colors"
+                        className="text-purple-400 text-sm mt-2 hover:text-purple-300 transition-colors"
                     >
                         Ver los {postComments.length} comentarios
                     </button>

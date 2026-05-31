@@ -39,7 +39,7 @@ export const CommentForm = ({ postId, onCommentCreated }) => {
             <button
                 type="submit"
                 disabled={!texto.trim() || loading}
-                className="text-blue-500 hover:text-blue-400 text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="text-purple-400 hover:text-purple-300 text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
                 {loading ? '...' : 'Publicar'}
             </button>
