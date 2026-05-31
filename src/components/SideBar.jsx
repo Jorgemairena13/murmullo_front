@@ -1,13 +1,47 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { NavLink } from "react-router-dom"
 import logo from "../assets/img/logo.png"
 import { useAuth } from "../context/AuthContext"
 import { SettingsModal } from "./SettingsModal"
-
+import { FollowRequestsModal } from "./FollowRequestsModal"
+import { getFollowRequests } from "../services/followRequestService"
 
 export const SideBar = () => {
     const { user } = useAuth();
     const [settingsOpen, setSettingsOpen] = useState(false);
+    const [requestsOpen, setRequestsOpen] = useState(false);
+    const [pendingCount, setPendingCount] = useState(0);
+
+    useEffect(() => {
+        if (!user) return;
+        let cancelled = false;
+        (async () => {
+            try {
+                const data = await getFollowRequests();
+                if (cancelled) return;
+                const list = data.follow_requests || data.data || data || [];
+                setPendingCount(list.length);
+            } catch {
+                if (!cancelled) setPendingCount(0);
+            }
+        })();
+        return () => { cancelled = true; };
+    }, [user]);
+
+    const refetchCount = () => {
+        if (!user) return;
+        getFollowRequests()
+            .then(data => {
+                const list = data.follow_requests || data.data || data || [];
+                setPendingCount(list.length);
+            })
+            .catch(() => setPendingCount(0));
+    };
+
+    const handleRequestsClose = () => {
+        setRequestsOpen(false);
+        refetchCount();
+    };
 
     const datosLink = [
         {
@@ -66,6 +100,22 @@ export const SideBar = () => {
 
                     {user && (
                         <button
+                            onClick={() => setRequestsOpen(true)}
+                            className="relative flex flex-col items-center gap-0.5 justify-center w-[64px] h-full rounded-xl transition-all duration-300 text-gray-400 hover:text-white hover:bg-gray-800/50"
+                            title="Solicitudes"
+                        >
+                            <i className="fi fi-rr-bell text-xl"></i>
+                            {pendingCount > 0 && (
+                                <span className="absolute -top-0.5 right-2.5 md:right-1 bg-red-500 text-white text-[9px] font-bold min-w-[16px] h-4 flex items-center justify-center rounded-full px-1">
+                                    {pendingCount > 9 ? '9+' : pendingCount}
+                                </span>
+                            )}
+                            <span className="text-[10px] leading-tight font-medium">Solicitudes</span>
+                        </button>
+                    )}
+
+                    {user && (
+                        <button
                             onClick={() => setSettingsOpen(true)}
                             className="flex flex-col items-center gap-0.5 justify-center w-[64px] h-full rounded-xl transition-all duration-300 text-gray-400 hover:text-white hover:bg-gray-800/50"
                             title="Configuración"
@@ -78,6 +128,7 @@ export const SideBar = () => {
             </nav>
 
             <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
+            <FollowRequestsModal isOpen={requestsOpen} onClose={handleRequestsClose} onUpdate={refetchCount} />
         </>
     )
 }

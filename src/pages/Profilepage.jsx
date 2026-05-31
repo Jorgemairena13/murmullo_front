@@ -42,6 +42,7 @@ export const Profile = () => {
     const [error, setError] = useState(null);
     const [imgErrors, setImgErrors] = useState({});
     const [following, setFollowing] = useState(false);
+    const [hasPendingRequest, setHasPendingRequest] = useState(false);
     const userId = id || currentUser?.id;
 
     useEffect(() => {
@@ -50,7 +51,9 @@ export const Profile = () => {
             setError(null);
             try {
                 const userData = await getUserProfile(userId);
-                setProfileUser(userData.usuario || userData);
+                const profile = userData.usuario || userData;
+                setProfileUser(profile);
+                setHasPendingRequest(!!profile.has_pending_request);
 
                 const postsData = await getUserPosts(userId);
                 const postsArray = postsData.posts?.data || postsData.posts || postsData.data || [];
@@ -70,25 +73,55 @@ export const Profile = () => {
     const handleFollow = async () => {
         if (following) return;
         const wasFollowing = profileUser.is_following;
-        setProfileUser(prev => ({
-            ...prev,
-            is_following: !wasFollowing,
-            followers_count: wasFollowing ? prev.followers_count - 1 : prev.followers_count + 1,
-        }));
+        const wasPending = hasPendingRequest;
+        const isUnfollow = wasFollowing || wasPending;
+
         setFollowing(true);
+        if (isUnfollow) {
+            setProfileUser(prev => ({
+                ...prev,
+                is_following: false,
+                followers_count: wasFollowing ? prev.followers_count - 1 : prev.followers_count,
+            }));
+            setHasPendingRequest(false);
+        } else {
+            setProfileUser(prev => ({
+                ...prev,
+                is_following: true,
+                followers_count: prev.followers_count + 1,
+            }));
+        }
+
         try {
-            if (wasFollowing) {
+            if (isUnfollow) {
                 await unfollowUser(userId);
             } else {
-                await followUser(userId);
+                const response = await followUser(userId);
+                if (response.follow_request) {
+                    setProfileUser(prev => ({
+                        ...prev,
+                        is_following: false,
+                        followers_count: prev.followers_count - 1,
+                    }));
+                    setHasPendingRequest(true);
+                }
             }
         } catch (err) {
             console.error('Follow error:', err);
-            setProfileUser(prev => ({
-                ...prev,
-                is_following: wasFollowing,
-                followers_count: wasFollowing ? prev.followers_count + 1 : prev.followers_count - 1,
-            }));
+            if (isUnfollow) {
+                setProfileUser(prev => ({
+                    ...prev,
+                    is_following: wasFollowing,
+                    followers_count: wasFollowing ? prev.followers_count + 1 : prev.followers_count,
+                }));
+                setHasPendingRequest(wasPending);
+            } else {
+                setProfileUser(prev => ({
+                    ...prev,
+                    is_following: wasFollowing,
+                    followers_count: prev.followers_count - 1,
+                }));
+            }
         } finally {
             setFollowing(false);
         }
@@ -164,13 +197,21 @@ export const Profile = () => {
                         <button 
                             onClick={handleFollow}
                             disabled={following}
-                            className={`px-4 py-2 rounded-full font-medium text-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
-                                profileUser.is_following 
-                                    ? 'bg-gray-700 text-white hover:bg-gray-600' 
-                                    : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                            className={`px-4 py-2 rounded-full font-medium text-sm transition-all disabled:opacity-60 disabled:cursor-not-allowed ${
+                                profileUser.is_following
+                                    ? 'bg-gray-700 text-white hover:bg-gray-600'
+                                    : hasPendingRequest
+                                        ? 'bg-yellow-600/20 text-yellow-400 border border-yellow-600/50 hover:bg-yellow-600/30'
+                                        : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
                             }`}
                         >
-                            {following ? '...' : profileUser.is_following ? 'Siguiendo' : 'Seguir'}
+                            {following
+                                ? '...'
+                                : profileUser.is_following
+                                    ? 'Siguiendo'
+                                    : hasPendingRequest
+                                        ? 'Solicitud enviada'
+                                        : 'Seguir'}
                         </button>
                     )}
                 </div>
