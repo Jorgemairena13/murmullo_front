@@ -30,8 +30,8 @@ export const SideBar = () => {
     ]
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-gray-800 z-50
-            md:fixed md:top-0 md:left-0 md:bottom-0 md:right-auto md:w-20 md:h-full md:bg-black md:border-r md:border-t-0 md:border-gray-800 lg:w-24">
+        <nav className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-gray-800 z-50 pb-[env(safe-area-inset-bottom)]
+            md:fixed md:top-0 md:left-0 md:bottom-0 md:right-auto md:w-20 md:h-full md:bg-black md:border-r md:border-t-0 md:border-gray-800 lg:w-24 md:pb-0">
 
             <div className="hidden md:flex justify-center py-6">
                 <NavLink to="/" className="p-2 rounded-xl hover:bg-gray-800/50 transition-all duration-300">
@@ -39,13 +39,13 @@ export const SideBar = () => {
                 </NavLink>
             </div>
 
-            <div className="flex justify-around items-center h-16 px-2
+            <div className="flex justify-around items-center h-[72px] px-2
                 md:flex-col md:h-auto md:py-4 md:px-0 md:gap-2">
                 
                 {datosLink.map((datos) => (
                     <NavLink
                         className={({ isActive }) => {
-                            const baseClass = "flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300"
+                            const baseClass = "flex flex-col items-center gap-0.5 justify-center w-[64px] h-full rounded-xl transition-all duration-300"
                             const activeClass = isActive 
                                 ? "bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-600/20" 
                                 : "text-gray-400 hover:text-white hover:bg-gray-800/50"
@@ -56,6 +56,7 @@ export const SideBar = () => {
                         title={datos.text}
                     >
                         <i className={`${datos.className} text-xl`}></i>
+                        <span className="text-[10px] leading-tight font-medium">{datos.text}</span>
                     </NavLink>
                 ))}
             </div>

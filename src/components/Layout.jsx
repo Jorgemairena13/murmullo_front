@@ -6,7 +6,7 @@ export const Layout = () => {
         <div className="min-h-screen flex">
             <SideBar />
 
-            <main className="w-full bg-black min-h-screen md:ml-20 lg:ml-44">
+            <main className="w-full bg-black min-h-screen pb-[72px] md:pb-0 md:ml-20 lg:ml-44">
                 <Outlet/>
             </main>
 
