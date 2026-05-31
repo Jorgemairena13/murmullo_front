@@ -1,6 +1,6 @@
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
-import { useParams, useNavigate, Navigate } from "react-router-dom";
+import { useParams, useNavigate, Navigate, Link } from "react-router-dom";
 import { getUserProfile, getUserPosts, followUser, unfollowUser } from "../services/postService";
 import { deleteAccount } from "../services/userService";
 import { EditProfileModal } from "../components/EditProfileModal";
@@ -184,12 +184,12 @@ export const Profile = () => {
                     const isError = imgErrors[post.id];
 
                     return (
-                        <div key={post.id} className="aspect-square bg-gray-800">
+                        <Link key={post.id} to={`/post/${post.id}`} className="aspect-square bg-gray-800 block overflow-hidden group">
                             {postImgUrl && !isError ? (
                                 <img 
                                     src={postImgUrl}
                                     alt="post" 
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                     onError={() => setImgErrors(prev => ({ ...prev, [post.id]: true }))}
                                 />
                             ) : (
@@ -197,7 +197,7 @@ export const Profile = () => {
                                     {post.texto?.substring(0, 20) || 'Sin texto'}
                                 </div>
                             )}
-                        </div>
+                        </Link>
                     );
                 })}
             </div>

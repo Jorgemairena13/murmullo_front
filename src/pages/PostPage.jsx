@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getPost, likePost, unlikePost } from '../services/postService';
+import { useAuth } from '../context/AuthContext';
+import { getPost, likePost, unlikePost, deletePost } from '../services/postService';
 import { CommentForm } from '../components/CommentForm';
 import { CommentList } from '../components/CommentList';
 import { getComments } from '../services/commentService';
 import { BASE_URL } from '../services/client';
 
 export const PostPage = () => {
+    const { user: currentUser } = useAuth();
     const { postId } = useParams();
     const navigate = useNavigate();
 
@@ -14,6 +16,7 @@ export const PostPage = () => {
     const [loading, setLoading] = useState(true);
     const [comments, setComments] = useState([]);
     const [showComments, setShowComments] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -67,6 +70,23 @@ export const PostPage = () => {
         setComments(prev => prev.filter(c => c.id !== commentId));
         setPost(prev => ({ ...prev, comentarios_count: Math.max(0, (prev.comentarios_count || 0) - 1) }));
     };
+
+    const handleDelete = async () => {
+        if (deleting) return;
+        if (!window.confirm('¿Eliminar este post?')) return;
+        setDeleting(true);
+        try {
+            await deletePost(postId);
+            navigate(-1);
+        } catch (err) {
+            console.error('Error deleting post:', err);
+            alert('Error al eliminar el post');
+        } finally {
+            setDeleting(false);
+        }
+    };
+
+    const isOwner = currentUser?.id === post?.user?.id;
 
     const getImageUrl = (url) => {
         if (!url) return null;
@@ -137,6 +157,18 @@ export const PostPage = () => {
                             <p className="text-gray-500 text-xs">@{post.user?.username || 'usuario'}</p>
                         </div>
                     </Link>
+
+                    {isOwner && (
+                        <button
+                            onClick={handleDelete}
+                            disabled={deleting}
+                            className="ml-auto text-gray-500 hover:text-red-400 transition-colors p-1"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    )}
                 </div>
 
                 <div className="flex-1 overflow-y-auto">

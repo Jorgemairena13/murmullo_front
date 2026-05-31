@@ -59,6 +59,10 @@ export const FeedPage = () => {
         setPosts(prev => [newPost, ...prev]);
     };
 
+    const handleDelete = (postId) => {
+        setPosts(prev => prev.filter(p => p.id !== postId));
+    };
+
     return (
         <div className="max-w-xl mx-auto h-[calc(100vh-60px)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <div className="p-4">
@@ -83,7 +87,7 @@ export const FeedPage = () => {
             ) : (
                 <div className="mt-2">
                     {posts.map(post => (
-                        <PostCard key={post.id} post={post} onLike={handleLike} />
+                        <PostCard key={post.id} post={post} onLike={handleLike} onDelete={handleDelete} />
                     ))}
                 </div>
             )}
