@@ -4,8 +4,33 @@ import { useAuth } from '../context/AuthContext';
 import { getPost, likePost, unlikePost, deletePost } from '../services/postService';
 import { CommentForm } from '../components/CommentForm';
 import { CommentList } from '../components/CommentList';
+import { Skeleton } from '../components/Skeleton';
 import { getComments } from '../services/commentService';
 import { BASE_URL } from '../services/client';
+
+const PostDetailSkeleton = () => (
+    <div className="h-screen bg-black flex flex-col lg:flex-row">
+        <div className="flex-1 flex items-center justify-center bg-gray-900">
+            <Skeleton className="w-full h-full max-w-lg max-h-lg aspect-square rounded-none" />
+        </div>
+        <div className="w-full lg:w-[420px] bg-gray-900 border-l border-gray-800 flex flex-col h-full p-4">
+            <div className="flex items-center gap-3 mb-6">
+                <Skeleton className="w-10 h-10 rounded-full" />
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-32 rounded" />
+                    <Skeleton className="h-3 w-20 rounded" />
+                </div>
+            </div>
+            <Skeleton className="h-4 w-full rounded mb-2" />
+            <Skeleton className="h-4 w-3/4 rounded mb-6" />
+            <div className="flex gap-6 mb-6">
+                <Skeleton className="h-7 w-16 rounded" />
+                <Skeleton className="h-7 w-16 rounded" />
+            </div>
+            <Skeleton className="h-10 w-full rounded" />
+        </div>
+    </div>
+);
 
 export const PostPage = () => {
     const { user: currentUser } = useAuth();
@@ -14,17 +39,22 @@ export const PostPage = () => {
 
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [comments, setComments] = useState([]);
     const [showComments, setShowComments] = useState(false);
     const [deleting, setDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState(null);
 
     useEffect(() => {
         const fetchPost = async () => {
+            setLoading(true);
+            setError(null);
             try {
                 const data = await getPost(postId);
                 setPost(data.post || data.data || data);
             } catch (err) {
                 console.error('Error loading post:', err);
+                setError('Error al cargar el post');
             } finally {
                 setLoading(false);
             }
@@ -80,7 +110,7 @@ export const PostPage = () => {
             navigate(-1);
         } catch (err) {
             console.error('Error deleting post:', err);
-            alert('Error al eliminar el post');
+            setDeleteError('Error al eliminar el post');
         } finally {
             setDeleting(false);
         }
@@ -94,9 +124,24 @@ export const PostPage = () => {
     };
 
     if (loading) {
+        return <PostDetailSkeleton />;
+    }
+
+    if (error) {
         return (
-            <div className="h-screen flex items-center justify-center bg-black">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500" />
+            <div className="h-screen flex flex-col items-center justify-center bg-black text-white gap-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-14 w-14 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                </svg>
+                <p className="text-gray-400">{error}</p>
+                <div className="flex gap-3">
+                    <button onClick={() => navigate(-1)} className="px-4 py-2 bg-gray-700 rounded-lg text-sm hover:bg-gray-600 transition-colors">
+                        Volver
+                    </button>
+                    <button onClick={() => window.location.reload()} className="px-4 py-2 bg-purple-600 rounded-lg text-sm hover:bg-purple-500 transition-colors">
+                        Reintentar
+                    </button>
+                </div>
             </div>
         );
     }
@@ -104,7 +149,7 @@ export const PostPage = () => {
     if (!post) {
         return (
             <div className="h-screen flex flex-col items-center justify-center bg-black text-white gap-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-14 w-14 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                 </svg>
                 <p className="text-gray-500 font-medium">Post no encontrado</p>
@@ -165,7 +210,7 @@ export const PostPage = () => {
                         <button
                             onClick={handleDelete}
                             disabled={deleting}
-                            className="ml-auto text-gray-500 hover:text-red-400 transition-colors p-1"
+                            className="ml-auto text-gray-500 hover:text-red-400 transition-colors p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -183,7 +228,7 @@ export const PostPage = () => {
 
                     <div className="p-4 border-b border-gray-800">
                         <div className="flex items-center gap-6">
-                            <button onClick={handleLike} className={`flex items-center gap-2 transition-colors ${post.is_liked ? 'text-red-500' : 'text-white hover:text-red-400'}`}>
+                            <button onClick={handleLike} className={`flex items-center gap-2 transition-colors active:scale-75 transition-transform duration-150 ${post.is_liked ? 'text-red-500' : 'text-white hover:text-red-400'}`}>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 24 24"
                                     fill={post.is_liked ? "currentColor" : "none"}
                                     stroke="currentColor" strokeWidth="2"
@@ -199,6 +244,9 @@ export const PostPage = () => {
                                 <span className="text-white text-sm">{post.comentarios_count || 0}</span>
                             </button>
                         </div>
+                        {deleteError && (
+                            <p className="text-red-400 text-xs mt-2">{deleteError}</p>
+                        )}
                     </div>
 
                     {showComments && (

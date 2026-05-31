@@ -6,6 +6,7 @@ export const CreatePostForm = ({ onPostCreated }) => {
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState(null);
     const [preview, setPreview] = useState(null);
+    const [error, setError] = useState(null);
     const inputRef = useRef(null);
 
     const handleFileSelect = (e) => {
@@ -28,6 +29,7 @@ export const CreatePostForm = ({ onPostCreated }) => {
         if (!content.trim() && !file) return;
 
         setLoading(true);
+        setError(null);
 
         try {
             let newPost;
@@ -41,6 +43,7 @@ export const CreatePostForm = ({ onPostCreated }) => {
             if (onPostCreated) onPostCreated(newPost);
         } catch (err) {
             console.error('Error creating post:', err);
+            setError('Error al publicar. Intenta de nuevo.');
         } finally {
             setLoading(false);
         }
@@ -72,6 +75,10 @@ export const CreatePostForm = ({ onPostCreated }) => {
                         &times;
                     </button>
                 </div>
+            )}
+
+            {error && (
+                <p className="text-red-400 text-xs mt-2">{error}</p>
             )}
 
             <div className="flex items-center justify-between mt-3">
