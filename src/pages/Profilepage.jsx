@@ -16,6 +16,7 @@ export const Profile = () => {
     const [loading, setLoading] = useState(true);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [imgErrors, setImgErrors] = useState({});
+    const [following, setFollowing] = useState(false);
     const userId = id || currentUser?.id;
 
     useEffect(() => {
@@ -42,16 +43,30 @@ export const Profile = () => {
     }, [userId, isLoading]);
 
     const handleFollow = async () => {
+        if (following) return;
+        const wasFollowing = profileUser.is_following;
+        setProfileUser(prev => ({
+            ...prev,
+            is_following: !wasFollowing,
+            followers_count: wasFollowing ? prev.followers_count - 1 : prev.followers_count + 1,
+        }));
+        setFollowing(true);
         try {
-            if (profileUser.is_following) {
+            if (wasFollowing) {
                 await unfollowUser(userId);
-                setProfileUser(prev => ({ ...prev, is_following: false, followers_count: prev.followers_count - 1 }));
             } else {
                 await followUser(userId);
-                setProfileUser(prev => ({ ...prev, is_following: true, followers_count: prev.followers_count + 1 }));
             }
         } catch (err) {
             console.error('Follow error:', err);
+            setProfileUser(prev => ({
+                ...prev,
+                is_following: wasFollowing,
+                followers_count: wasFollowing ? prev.followers_count + 1 : prev.followers_count - 1,
+            }));
+            alert('Error al cambiar el estado de seguimiento');
+        } finally {
+            setFollowing(false);
         }
     };
 
@@ -117,13 +132,14 @@ export const Profile = () => {
                     {!isOwnProfile && (
                         <button 
                             onClick={handleFollow}
-                            className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${
+                            disabled={following}
+                            className={`px-4 py-2 rounded-full font-medium text-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
                                 profileUser.is_following 
                                     ? 'bg-gray-700 text-white hover:bg-gray-600' 
                                     : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
                             }`}
                         >
-                            {profileUser.is_following ? 'Siguiendo' : 'Seguir'}
+                            {following ? '...' : profileUser.is_following ? 'Siguiendo' : 'Seguir'}
                         </button>
                     )}
                     
