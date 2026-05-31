@@ -67,3 +67,8 @@ export const getPost = async (postId) => {
     const response = await client.get(`/posts/${postId}`);
     return response.data;
 };
+
+export const deletePost = async (postId) => {
+    const response = await client.delete(`/posts/${postId}`);
+    return response.data;
+};

@@ -1,13 +1,20 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { CommentForm } from './CommentForm';
 import { CommentList } from './CommentList';
 import { getComments } from '../services/commentService';
+import { deletePost } from '../services/postService';
 import { BASE_URL } from '../services/client';
 
-export const PostCard = ({ post, onLike }) => {
+export const PostCard = ({ post, onLike, onDelete }) => {
+    const { user: currentUser } = useAuth();
     const { id, texto, imagen_url, is_liked = false, user, comments = [], comments_count = 0 } = post;
     const [showComments, setShowComments] = useState(false);
     const [postComments, setPostComments] = useState(comments);
+    const [deleting, setDeleting] = useState(false);
+
+    const isOwner = currentUser?.id === user?.id;
 
     const handleLike = (e) => {
         e.stopPropagation();
@@ -17,6 +24,22 @@ export const PostCard = ({ post, onLike }) => {
     const handleCommentClick = (e) => {
         e.stopPropagation();
         setShowComments(prev => !prev);
+    };
+
+    const handleDelete = async (e) => {
+        e.stopPropagation();
+        if (deleting) return;
+        if (!window.confirm('¿Eliminar este post?')) return;
+        setDeleting(true);
+        try {
+            await deletePost(id);
+            if (onDelete) onDelete(id);
+        } catch (err) {
+            console.error('Error deleting post:', err);
+            alert('Error al eliminar el post');
+        } finally {
+            setDeleting(false);
+        }
     };
 
     useEffect(() => {
@@ -71,19 +94,33 @@ export const PostCard = ({ post, onLike }) => {
             
             <div className="p-3">
                 <div className="flex items-center gap-2 mb-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-xs">
-                        {user?.avatar_url ? (
-                            <img src={user.avatar_url.startsWith('http') ? user.avatar_url : `${BASE_URL}${user.avatar_url}`} alt="avatar" className="w-full h-full rounded-full object-cover" />
-                        ) : (
-                            user?.nombre?.charAt(0).toUpperCase() || 'U'
-                        )}
-                    </div>
-                    <span className="font-semibold text-white text-sm">
-                        {user?.nombre || 'Usuario'}
-                    </span>
-                    <span className="text-gray-500 text-xs">
-                        @{user?.username || 'usuario'}
-                    </span>
+                    <Link to={`/profile/${user?.id}`} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-xs">
+                            {user?.avatar_url ? (
+                                <img src={user.avatar_url.startsWith('http') ? user.avatar_url : `${BASE_URL}${user.avatar_url}`} alt="avatar" className="w-full h-full rounded-full object-cover" />
+                            ) : (
+                                user?.nombre?.charAt(0).toUpperCase() || 'U'
+                            )}
+                        </div>
+                        <span className="font-semibold text-white text-sm">
+                            {user?.nombre || 'Usuario'}
+                        </span>
+                        <span className="text-gray-500 text-xs">
+                            @{user?.username || 'usuario'}
+                        </span>
+                    </Link>
+
+                    {isOwner && (
+                        <button
+                            onClick={handleDelete}
+                            disabled={deleting}
+                            className="ml-auto text-gray-500 hover:text-red-400 transition-colors p-1"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    )}
                 </div>
                 
                 {texto && (
