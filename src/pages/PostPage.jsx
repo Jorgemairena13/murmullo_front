@@ -190,7 +190,7 @@ export const PostPage = () => {
                 )}
             </div>
 
-            <div className="w-full lg:w-[420px] bg-gray-900 border-l border-gray-800 flex flex-col h-full">
+            <div className="w-full lg:w-[420px] bg-gray-900 border-t lg:border-t-0 lg:border-l border-gray-800 flex flex-col lg:h-full max-h-[45vh] lg:max-h-full overflow-y-auto">
                 <div className="p-4 border-b border-gray-800 flex items-center gap-3">
                     <Link to={`/profile/${post.user?.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                         {userAvatarUrl ? (
