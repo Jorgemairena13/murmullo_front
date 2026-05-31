@@ -20,7 +20,7 @@ export const Busqueda = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [followingUsers, setFollowingUsers] = useState({});
+    const [followStates, setFollowStates] = useState({});
 
     useEffect(() => {
         const search = async () => {
@@ -35,9 +35,11 @@ export const Busqueda = () => {
                 const data = await searchUsers(query);
                 const usersList = data.users || data || [];
                 setUsers(usersList);
-                const followState = {};
-                usersList.forEach(u => { followState[u.id] = u.is_following; });
-                setFollowingUsers(followState);
+                const state = {};
+                usersList.forEach(u => {
+                    state[u.id] = u.is_following ? 'following' : u.has_pending_request ? 'pending' : null;
+                });
+                setFollowStates(state);
             } catch (err) {
                 console.error('Search error:', err);
                 setError('Error al buscar usuarios');
@@ -50,18 +52,23 @@ export const Busqueda = () => {
         return () => clearTimeout(debounce);
     }, [query]);
 
-    const handleFollow = async (userId, isFollowing) => {
-        const previous = { ...followingUsers };
-        setFollowingUsers(prev => ({ ...prev, [userId]: !isFollowing }));
+    const handleFollow = async (userId) => {
+        const currentState = followStates[userId];
+        const previous = { ...followStates };
+        const isUnfollow = currentState === 'following' || currentState === 'pending';
+        setFollowStates(prev => ({ ...prev, [userId]: isUnfollow ? null : 'following' }));
         try {
-            if (isFollowing) {
+            if (isUnfollow) {
                 await unfollowUser(userId);
             } else {
-                await followUser(userId);
+                const response = await followUser(userId);
+                if (response.follow_request) {
+                    setFollowStates(prev => ({ ...prev, [userId]: 'pending' }));
+                }
             }
         } catch (err) {
             console.error('Follow error:', err);
-            setFollowingUsers(previous);
+            setFollowStates(previous);
         }
     };
 
@@ -118,7 +125,7 @@ export const Busqueda = () => {
             {!loading && users.length > 0 && (
                 <div className="divide-y divide-gray-800">
                     {users.map(user => {
-                        const isFollowing = followingUsers[user.id];
+                        const state = followStates[user.id];
                         return (
                             <div key={user.id} className="flex items-center gap-4 p-4 hover:bg-gray-800/50 transition-colors">
                                 <Link to={`/profile/${user.id}`} className="flex items-center gap-4 flex-1 min-w-0">
@@ -135,14 +142,16 @@ export const Busqueda = () => {
                                     </div>
                                 </Link>
                                 <button
-                                    onClick={() => handleFollow(user.id, isFollowing)}
+                                    onClick={() => handleFollow(user.id)}
                                     className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                                        isFollowing
+                                        state === 'following'
                                             ? 'bg-gray-700 text-white hover:bg-gray-600'
-                                            : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-500 hover:to-pink-500'
+                                            : state === 'pending'
+                                                ? 'bg-yellow-600/20 text-yellow-400 border border-yellow-600/50 hover:bg-yellow-600/30'
+                                                : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-500 hover:to-pink-500'
                                     }`}
                                 >
-                                    {isFollowing ? 'Siguiendo' : 'Seguir'}
+                                    {state === 'following' ? 'Siguiendo' : state === 'pending' ? 'Solicitud enviada' : 'Seguir'}
                                 </button>
                             </div>
                         );
