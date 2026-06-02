@@ -17,4 +17,18 @@ client.interceptors.request.use((config) => {
     return config;
 });
 
+client.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            const url = error.config?.url || '';
+            if (!url.includes('/login') && !url.includes('/register')) {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default client;

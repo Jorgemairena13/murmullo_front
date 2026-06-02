@@ -27,14 +27,11 @@ export const Login = ({direction}) => {
         e.preventDefault()
         setServerError('')
         try {
-            console.log('Enviando datos', credenciales)
             const data = await loginService(credenciales);
-            
-            console.log('Respuesta Laravel',data)
+
             setAuthSession(data.user, data.token)
             navigate('/', { replace: true })
-        } catch (error) {
-            console.error(error);
+        } catch {
             setServerError("Error al iniciar sesión. Revisa tus datos.");
 
         }
