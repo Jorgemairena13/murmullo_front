@@ -93,7 +93,7 @@ export const SideBar = () => {
                     {datosLink.map((datos) => (
                         <NavLink
                             className={({ isActive }) => {
-                                const baseClass = "flex flex-col items-center gap-0.5 justify-center w-[64px] h-full rounded-xl transition-all duration-300"
+                                const baseClass = "flex flex-col items-center gap-0.5 justify-center w-[52px] md:w-[64px] h-full rounded-xl transition-all duration-300"
                                 const activeClass = isActive 
                                     ? "bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-600/20" 
                                     : "text-gray-400 hover:text-white hover:bg-gray-800/50"
@@ -111,7 +111,7 @@ export const SideBar = () => {
                     {user && (
                         <button
                             onClick={() => setActivityOpen(true)}
-                            className="relative flex flex-col items-center gap-0.5 justify-center w-[64px] h-full rounded-xl transition-all duration-300 text-gray-400 hover:text-white hover:bg-gray-800/50"
+                            className="relative flex flex-col items-center gap-0.5 justify-center w-[52px] md:w-[64px] h-full rounded-xl transition-all duration-300 text-gray-400 hover:text-white hover:bg-gray-800/50"
                             title="Actividad"
                         >
                             <i className="fi fi-rr-bell text-xl"></i>
@@ -127,7 +127,7 @@ export const SideBar = () => {
                     {user && (
                         <button
                             onClick={() => setSettingsOpen(true)}
-                            className="flex flex-col items-center gap-0.5 justify-center w-[64px] h-full rounded-xl transition-all duration-300 text-gray-400 hover:text-white hover:bg-gray-800/50"
+                            className="flex flex-col items-center gap-0.5 justify-center w-[52px] md:w-[64px] h-full rounded-xl transition-all duration-300 text-gray-400 hover:text-white hover:bg-gray-800/50"
                             title="Configuración"
                         >
                             <i className="fi fi-rr-settings text-xl"></i>
