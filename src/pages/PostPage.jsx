@@ -255,7 +255,6 @@ export const PostPage = () => {
                             <CommentList comments={comments} onCommentDeleted={handleCommentDeleted} />
                         </div>
                     )}
-                    <div className="h-20 lg:hidden" />
                 </div>
             </div>
         </div>
