@@ -70,6 +70,18 @@ function App() {
                     </Route>
 
                     </Route>
+                    <Route path='*' element={
+                        <div className="h-screen flex flex-col items-center justify-center bg-black text-white gap-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <h1 className="text-2xl font-bold">Página no encontrada</h1>
+                            <p className="text-gray-500">La ruta a la que intentas acceder no existe.</p>
+                            <a href="/" className="mt-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl font-semibold hover:opacity-90 transition-opacity">
+                                Volver al inicio
+                            </a>
+                        </div>
+                    } />
                 </Routes>
             </AnimatePresence>
         </div>

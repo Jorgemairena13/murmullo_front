@@ -166,7 +166,7 @@ export const PostPage = () => {
         : null;
 
     return (
-        <div className="h-screen bg-black flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden">
+        <div className="bg-black flex flex-col lg:flex-row lg:min-h-screen lg:overflow-hidden">
             <div className="max-h-[50vh] lg:max-h-none lg:flex-1 flex items-center justify-center bg-black relative">
                 <button
                     onClick={() => navigate(-1)}
