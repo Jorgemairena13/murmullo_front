@@ -216,7 +216,7 @@ export const Profile = () => {
                     )}
                 </div>
 
-                <div className="flex justify-around text-center mb-4">
+                <div className="grid grid-cols-3 text-center mb-4">
                     <div>
                         <span className="block text-xl font-bold text-white">{posts.length}</span>
                         <span className="text-sm text-gray-400">Publicaciones</span>
