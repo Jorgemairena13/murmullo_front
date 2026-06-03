@@ -166,8 +166,8 @@ export const PostPage = () => {
         : null;
 
     return (
-        <div className="bg-black flex flex-col lg:flex-row lg:min-h-screen lg:overflow-hidden">
-            <div className="max-h-[50vh] lg:max-h-none lg:flex-1 flex items-center justify-center bg-black relative">
+        <div className="h-screen lg:min-h-screen bg-black flex flex-col lg:flex-row lg:overflow-hidden">
+            <div className="h-[40vh] shrink-0 lg:h-auto lg:flex-1 flex items-center justify-center bg-black relative">
                 <button
                     onClick={() => navigate(-1)}
                     className="absolute top-4 left-4 z-10 text-white hover:text-gray-300 transition-colors p-2 rounded-full bg-black/50 hover:bg-black/70"
@@ -190,7 +190,7 @@ export const PostPage = () => {
                 )}
             </div>
 
-            <div className="w-full lg:w-[420px] bg-gray-900 border-t lg:border-t-0 lg:border-l border-gray-800 flex flex-col lg:h-full">
+            <div className="flex-1 lg:flex-none w-full lg:w-[420px] bg-gray-900 border-t lg:border-t-0 lg:border-l border-gray-800 flex flex-col overflow-y-auto lg:h-full">
                 <div className="p-4 border-b border-gray-800 flex items-center gap-3">
                     <Link to={`/profile/${post.user?.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                         {userAvatarUrl ? (
