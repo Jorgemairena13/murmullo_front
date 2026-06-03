@@ -73,7 +73,7 @@ export const Busqueda = () => {
     };
 
     return (
-        <div className="h-[calc(100vh-60px)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="h-[calc(100vh-72px)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <div className="sticky top-0 bg-black/80 backdrop-blur-lg z-10 border-b border-gray-800">
                 <div className="px-4 py-3">
                     <h1 className="text-xl font-bold text-white">Buscar</h1>

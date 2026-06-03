@@ -81,7 +81,7 @@ export default function RegisterPage({direction}) {
         <div className="min-h-screen flex bg-gray-900 overflow-hidden">
             
             {/* === SECCIÓN IZQUIERDA (FORMULARIO) === */}
-            <div className="flex w-full lg:w-1/2 justify-center items-center bg-gray-900 px-6 py-12 lg:px-16 overflow-y-auto h-screen">
+            <div className="flex w-full lg:w-1/2 justify-center items-center bg-gray-900 px-6 pt-20 pb-12 lg:py-16 overflow-y-auto h-screen">
                 <div className="w-full max-w-lg">
                     
                     {/* Cabecera Móvil (Visible solo en pantallas pequeñas) */}
