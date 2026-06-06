@@ -21,6 +21,7 @@ export const Busqueda = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [followStates, setFollowStates] = useState({});
+    const [searchTrigger, setSearchTrigger] = useState(0);
 
     useEffect(() => {
         const search = async () => {
@@ -50,7 +51,7 @@ export const Busqueda = () => {
 
         const debounce = setTimeout(search, 300);
         return () => clearTimeout(debounce);
-    }, [query]);
+    }, [query, searchTrigger]);
 
     const handleFollow = async (userId) => {
         const currentState = followStates[userId];
@@ -98,7 +99,7 @@ export const Busqueda = () => {
                 <div className="mx-4 bg-red-900/30 border border-red-800/50 text-red-300 p-4 rounded-xl mb-4 text-sm flex items-center gap-3">
                     <span className="flex-1">{error}</span>
                     <button
-                        onClick={() => setQuery(prev => prev + ' ')}
+                        onClick={() => setSearchTrigger(prev => prev + 1)}
                         className="text-purple-400 hover:text-purple-300 font-medium transition-colors shrink-0"
                     >
                         Reintentar

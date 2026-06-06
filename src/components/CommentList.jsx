@@ -20,14 +20,12 @@ export const CommentList = ({ comments, onCommentDeleted }) => {
         setConfirmId(null);
 
         try {
-            console.log('🗑️ Eliminando comentario:', commentId);
             await deleteComment(commentId);
-            console.log('✅ Comentario eliminado');
             if (onCommentDeleted) {
                 onCommentDeleted(commentId);
             }
         } catch (err) {
-            console.error('❌ Error deleting comment:', err.response?.data || err.message);
+            console.error('Error deleting comment:', err);
         }
     };
 
