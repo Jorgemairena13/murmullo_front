@@ -26,6 +26,7 @@ export const SettingsModal = ({ isOpen, onClose }) => {
     const [confirmLogout, setConfirmLogout] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [deletingAccount, setDeletingAccount] = useState(false);
+    const [successMsg, setSuccessMsg] = useState('');
 
     useEffect(() => {
         if (isOpen && user) {
@@ -94,7 +95,8 @@ export const SettingsModal = ({ isOpen, onClose }) => {
             if (result.usuario || result.user || result) {
                 updateUser(result.usuario || result.user || result);
             }
-            onClose();
+            setSuccessMsg('Cambios guardados correctamente');
+            setTimeout(() => onClose(), 1500);
         } catch (error) {
             const errData = error.response?.data;
             if (error.response?.status === 422 && errData?.errors) {
@@ -155,6 +157,11 @@ export const SettingsModal = ({ isOpen, onClose }) => {
                     {serverError && (
                         <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-xl text-sm text-center">
                             {serverError}
+                        </div>
+                    )}
+                    {successMsg && (
+                        <div className="bg-green-500/10 border border-green-500/50 text-green-400 px-4 py-3 rounded-xl text-sm text-center">
+                            {successMsg}
                         </div>
                     )}
 

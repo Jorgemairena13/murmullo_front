@@ -46,6 +46,7 @@ export const PostPage = () => {
     const [deleting, setDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState(null);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [postImgError, setPostImgError] = useState(false);
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -183,11 +184,12 @@ export const PostPage = () => {
                     </svg>
                 </button>
 
-                {imageUrl ? (
+                {imageUrl && !postImgError ? (
                     <img
                         src={imageUrl}
                         alt="post"
                         className="max-w-full max-h-full object-contain"
+                        onError={() => setPostImgError(true)}
                     />
                 ) : (
                     <div className="text-gray-500 text-lg px-8 text-center">
@@ -234,7 +236,7 @@ export const PostPage = () => {
 
                     <div className="p-4 border-b border-gray-800">
                         <div className="flex items-center gap-6">
-                            <button onClick={handleLike} className={`flex items-center gap-2 transition-colors active:scale-75 transition-transform duration-150 ${post.is_liked ? 'text-red-500' : 'text-white hover:text-red-400'}`}>
+                            <button onClick={handleLike} className={`flex items-center gap-2 transition-all duration-150 active:scale-75 ${post.is_liked ? 'text-red-500' : 'text-white hover:text-red-400'}`}>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 24 24"
                                     fill={post.is_liked ? "currentColor" : "none"}
                                     stroke="currentColor" strokeWidth="2"
