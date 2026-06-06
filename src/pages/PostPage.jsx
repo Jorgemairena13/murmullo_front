@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { getPost, likePost, unlikePost, deletePost } from '../services/postService';
 import { CommentForm } from '../components/CommentForm';
 import { CommentList } from '../components/CommentList';
+import { ConfirmModal } from '../components/ConfirmModal';
 import { Skeleton } from '../components/Skeleton';
 import { getComments } from '../services/commentService';
 import { BASE_URL } from '../services/client';
@@ -44,6 +45,7 @@ export const PostPage = () => {
     const [showComments, setShowComments] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState(null);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -103,7 +105,11 @@ export const PostPage = () => {
 
     const handleDelete = async () => {
         if (deleting) return;
-        if (!window.confirm('¿Eliminar este post?')) return;
+        setShowConfirm(true);
+    };
+
+    const confirmDelete = async () => {
+        setShowConfirm(false);
         setDeleting(true);
         try {
             await deletePost(postId);
@@ -257,6 +263,13 @@ export const PostPage = () => {
                     )}
                 </div>
             </div>
+            <ConfirmModal
+                isOpen={showConfirm}
+                onConfirm={confirmDelete}
+                onCancel={() => setShowConfirm(false)}
+                title="Eliminar post"
+                message="¿Estás seguro de que quieres eliminar este post? Esta acción no se puede deshacer."
+            />
         </div>
     );
 };

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { CommentForm } from './CommentForm';
 import { CommentList } from './CommentList';
+import { ConfirmModal } from './ConfirmModal';
 import { getComments } from '../services/commentService';
 import { deletePost } from '../services/postService';
 import { BASE_URL } from '../services/client';
@@ -14,6 +15,7 @@ export const PostCard = ({ post, onLike, onDelete, onDeleteError }) => {
     const [postComments, setPostComments] = useState(comments);
     const [deleting, setDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState(null);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     const isOwner = currentUser?.id === user?.id;
 
@@ -30,7 +32,12 @@ export const PostCard = ({ post, onLike, onDelete, onDeleteError }) => {
     const handleDelete = async (e) => {
         e.stopPropagation();
         if (deleting) return;
-        if (!window.confirm('¿Eliminar este post?')) return;
+        setShowConfirm(true);
+    };
+
+    const confirmDelete = async () => {
+        setShowConfirm(false);
+        setDeleting(true);
         setDeleting(true);
         try {
             await deletePost(id);
@@ -184,6 +191,13 @@ export const PostCard = ({ post, onLike, onDelete, onDeleteError }) => {
                     </div>
                 )}
             </div>
+            <ConfirmModal
+                isOpen={showConfirm}
+                onConfirm={confirmDelete}
+                onCancel={() => setShowConfirm(false)}
+                title="Eliminar post"
+                message="¿Estás seguro de que quieres eliminar este post? Esta acción no se puede deshacer."
+            />
         </div>
     );
 };
