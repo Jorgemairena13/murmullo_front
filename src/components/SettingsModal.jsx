@@ -92,8 +92,8 @@ export const SettingsModal = ({ isOpen, onClose }) => {
 
         try {
             const result = await updateProfile(user.id, dataToSend);
-            if (result.usuario || result.user || result) {
-                updateUser(result.usuario || result.user || result);
+            if (result.usuario) {
+                updateUser(result.usuario);
             }
             setSuccessMsg('Cambios guardados correctamente');
             setTimeout(() => onClose(), 1500);
