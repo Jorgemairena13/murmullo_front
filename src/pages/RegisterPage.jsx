@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { register as registerService } from "../services/auth";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from '../assets/img/logo.png'
-import Transition from "../components/Transition";
+import { motion } from "framer-motion";
 
-export default function RegisterPage({direction}) {
+export default function RegisterPage() {
+    const location = useLocation();
     const { login } = useAuth();
     const navigate = useNavigate();
 
@@ -77,14 +78,15 @@ export default function RegisterPage({direction}) {
     };
 
     return (
-        <Transition direction={direction}>
-        <div className="min-h-screen flex bg-gray-900 overflow-hidden">
-            
-            {/* === SECCIÓN IZQUIERDA (FORMULARIO) === */}
+        <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="min-h-screen flex bg-gray-900 overflow-hidden"
+        >
             <div className="flex w-full lg:w-1/2 justify-start lg:justify-center items-start lg:items-center bg-gray-900 px-6 pt-24 pb-12 lg:py-16 overflow-y-auto h-screen">
                 <div className="w-full max-w-lg">
-                    
-                    {/* Cabecera Móvil (Visible solo en pantallas pequeñas) */}
                     <div className="lg:hidden mb-8 text-center">
                         <div className="h-16 w-16 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4">
                             <img src={logo} alt="logo" className="h-auto w-12" />
@@ -102,10 +104,7 @@ export default function RegisterPage({direction}) {
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-5" encType="multipart/form-data">
-
-                        {/* GRUPO 1: Nombre, Username y Email */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {/* Nombre */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-1 pl-1">Nombre</label>
                                 <input
@@ -119,8 +118,6 @@ export default function RegisterPage({direction}) {
                                 />
                                 {errors.nombre && <p className="text-red-400 text-xs mt-1 ml-1">{errors.nombre[0]}</p>}
                             </div>
-
-                            {/* Username */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-1 pl-1">Username</label>
                                 <input
@@ -134,8 +131,6 @@ export default function RegisterPage({direction}) {
                                 />
                                 {errors.username && <p className="text-red-400 text-xs mt-1 ml-1">{errors.username[0]}</p>}
                             </div>
-
-                            {/* Email */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-1 pl-1">Email</label>
                                 <input
@@ -151,7 +146,6 @@ export default function RegisterPage({direction}) {
                             </div>
                         </div>
 
-                        {/* Bio */}
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-1 pl-1">Biografía</label>
                             <textarea
@@ -165,7 +159,6 @@ export default function RegisterPage({direction}) {
                             {errors.bio && <p className="text-red-400 text-xs mt-1 ml-1">{errors.bio[0]}</p>}
                         </div>
 
-                        {/* Avatar */}
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-1 pl-1">Avatar</label>
                             <div className="relative group">
@@ -180,7 +173,6 @@ export default function RegisterPage({direction}) {
                             {errors.avatar && <p className="text-red-400 text-xs mt-1 ml-1">{errors.avatar[0]}</p>}
                         </div>
 
-                        {/* Checkbox Privada */}
                         <div className="flex items-center bg-gray-800/30 p-3 rounded-xl border border-gray-700/50">
                             <input
                                 id="is_private"
@@ -195,7 +187,6 @@ export default function RegisterPage({direction}) {
                             </label>
                         </div>
 
-                        {/* GRUPO 2: Contraseñas */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-1 pl-1">Contraseña</label>
@@ -225,7 +216,6 @@ export default function RegisterPage({direction}) {
                         </div>
                         {errors.password && <p className="text-red-400 text-xs mt-1 ml-1">{errors.password[0]}</p>}
 
-                        {/* Botón Submit */}
                         <button
                             type="submit"
                             disabled={uploading}
@@ -258,12 +248,9 @@ export default function RegisterPage({direction}) {
                 </div>
             </div>
 
-            
             <div className="hidden lg:flex w-1/2 bg-gradient-to-bl from-purple-900 via-indigo-900 to-blue-900 relative items-center justify-center overflow-hidden border-l border-white/5">
-                {/* Formas animadas de fondo */}
                 <div className="absolute top-20 right-20 w-80 h-80 bg-purple-500 rounded-full mix-blend-screen filter blur-[80px] opacity-20 animate-blob"></div>
                 <div className="absolute bottom-20 left-20 w-80 h-80 bg-blue-500 rounded-full mix-blend-screen filter blur-[80px] opacity-20 animate-blob animation-delay-2000"></div>
-                
                 <div className="relative z-10 text-center px-12">
                     <div className="h-24 w-24 bg-white/10 backdrop-blur-md rounded-3xl mx-auto flex items-center justify-center shadow-2xl mb-8 ring-1 ring-white/20">
                         <img src={logo} alt="logo" className="h-auto w-16" />
@@ -274,9 +261,7 @@ export default function RegisterPage({direction}) {
                     </p>
                 </div>
             </div>
-
-        </div>
-        </Transition>
+        </motion.div>
     );
 
 }
