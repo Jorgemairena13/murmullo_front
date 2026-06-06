@@ -86,8 +86,8 @@ export default function RegisterPage({direction}) {
                     
                     {/* Cabecera Móvil (Visible solo en pantallas pequeñas) */}
                     <div className="lg:hidden mb-8 text-center">
-                        <div className="h-12 w-12 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl mx-auto flex items-center justify-center shadow-lg mb-4">
-                            <span className="text-xl font-bold text-white">M</span>
+                        <div className="h-16 w-16 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4">
+                            <img src={logo} alt="logo" className="h-auto w-12" />
                         </div>
                         <h2 className="text-2xl font-bold text-white">Crear Cuenta</h2>
                     </div>
