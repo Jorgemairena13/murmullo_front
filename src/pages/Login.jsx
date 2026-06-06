@@ -60,7 +60,7 @@ export const Login = ({direction}) => {
 
                 
                 {/* === SECCIÓN DERECHA (Formulario) === */}
-                <div className="flex w-full lg:w-1/2 justify-center items-center bg-gray-900 px-6 py-12 lg:px-24">
+                <div className="flex w-full lg:w-1/2 justify-center items-center bg-gray-900 px-6 pt-20 pb-12 lg:py-16 lg:px-24 overflow-y-auto h-screen">
                     <div className="w-full max-w-md">
                         
                         {/* Cabecera visible solo en móvil */}
