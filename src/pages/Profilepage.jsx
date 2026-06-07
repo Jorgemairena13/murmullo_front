@@ -168,7 +168,7 @@ export const Profile = () => {
         <div className="max-w-xl mx-auto">
             <div className="p-4">
                 <div className="flex items-center gap-4 mb-6">
-                    <Avatar src={profileUser?.avatar_url} name={profileUser?.nombre} size={20} className="border-2 border-gray-700" />
+                    <Avatar src={isOwnProfile && currentUser?.avatar_url ? currentUser.avatar_url : profileUser?.avatar_url} name={profileUser?.nombre} size={20} className="border-2 border-gray-700" />
                     <div className="flex-1">
                         <h1 className="text-xl font-bold text-white">{profileUser.nombre}</h1>
                         <p className="text-gray-400">@{profileUser.username}</p>
