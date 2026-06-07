@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, Navigate, Link } from "react-router-dom";
 import { getUserProfile, getUserPosts, followUser, unfollowUser } from "../services/postService";
 import { Skeleton } from "../components/Skeleton";
+import { Avatar } from "../components/Avatar";
 import { BASE_URL } from "../services/client";
 
 const ProfileSkeleton = () => (
@@ -129,15 +130,6 @@ export const Profile = () => {
 
     const isOwnProfile = !id || id == currentUser?.id;
 
-    const [avatarError, setAvatarError] = useState(false);
-
-    const getAvatar = (userData) => {
-        if (userData?.avatar_url) {
-            return userData.avatar_url.startsWith('http') ? userData.avatar_url : `${BASE_URL}/${userData.avatar_url}`;
-        }
-        return null;
-    };
-
     if (!isLoading && currentUser?.id && !id) {
         return <Navigate to={`/profile/${currentUser.id}`} replace />;
     }
@@ -176,18 +168,7 @@ export const Profile = () => {
         <div className="max-w-xl mx-auto">
             <div className="p-4">
                 <div className="flex items-center gap-4 mb-6">
-                    {getAvatar(profileUser) && !avatarError ? (
-                        <img 
-                            src={getAvatar(profileUser)} 
-                            alt="Avatar"
-                            className="w-20 h-20 rounded-full object-cover border-2 border-gray-700"
-                            onError={() => setAvatarError(true)}
-                        />
-                    ) : (
-                        <div className="w-20 h-20 rounded-full border-2 border-gray-700 bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center text-white text-2xl font-bold">
-                            {profileUser.nombre?.charAt(0)?.toUpperCase() || 'U'}
-                        </div>
-                    )}
+                    <Avatar src={profileUser?.avatar_url} name={profileUser?.nombre} size={20} className="border-2 border-gray-700" />
                     <div className="flex-1">
                         <h1 className="text-xl font-bold text-white">{profileUser.nombre}</h1>
                         <p className="text-gray-400">@{profileUser.username}</p>

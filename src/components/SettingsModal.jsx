@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { updateProfile } from '../services/userService';
 import { deleteAccount } from '../services/userService';
-import { BASE_URL } from '../services/client';
+import { Avatar } from '../components/Avatar';
 
 export const SettingsModal = ({ isOpen, onClose }) => {
     const { user, logout, updateUser } = useAuth();
@@ -130,10 +130,6 @@ export const SettingsModal = ({ isOpen, onClose }) => {
 
     if (!isOpen) return null;
 
-    const currentAvatarUrl = user?.avatar_url
-        ? (user.avatar_url.startsWith('http') ? user.avatar_url : `${BASE_URL}${user.avatar_url}`)
-        : null;
-
     return (
         <div
             ref={overlayRef}
@@ -173,12 +169,8 @@ export const SettingsModal = ({ isOpen, onClose }) => {
                                     <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-800 border-2 border-gray-700">
                                         {avatarPreview ? (
                                             <img src={avatarPreview} alt="avatar preview" className="w-full h-full object-cover" />
-                                        ) : currentAvatarUrl ? (
-                                            <img src={currentAvatarUrl} alt="avatar" className="w-full h-full object-cover" />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-gray-500">
-                                                {user?.nombre?.charAt(0)?.toUpperCase() || 'U'}
-                                            </div>
+                                            <Avatar src={user?.avatar_url} name={user?.nombre} size={20} />
                                         )}
                                     </div>
                                     <label className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">

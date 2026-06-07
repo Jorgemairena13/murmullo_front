@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Avatar } from './Avatar';
 import { CommentForm } from './CommentForm';
 import { CommentList } from './CommentList';
 import { ConfirmModal } from './ConfirmModal';
@@ -103,13 +104,7 @@ export const PostCard = ({ post, onLike, onDelete, onDeleteError }) => {
             <div className="p-3 pt-2">
                 <div className="flex items-center gap-2 mb-2">
                     <Link to={`/profile/${user?.id}`} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-xs">
-                            {user?.avatar_url ? (
-                                <img src={user.avatar_url.startsWith('http') ? user.avatar_url : `${BASE_URL}${user.avatar_url}`} alt="avatar" className="w-full h-full rounded-full object-cover" />
-                            ) : (
-                                user?.nombre?.charAt(0).toUpperCase() || 'U'
-                            )}
-                        </div>
+                        <Avatar src={user?.avatar_url} name={user?.nombre} size={8} />
                         <span className="font-semibold text-white text-sm">
                             {user?.nombre || 'Usuario'}
                         </span>

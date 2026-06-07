@@ -6,6 +6,7 @@ import { CommentForm } from '../components/CommentForm';
 import { CommentList } from '../components/CommentList';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { Skeleton } from '../components/Skeleton';
+import { Avatar } from '../components/Avatar';
 import { getComments } from '../services/commentService';
 import { BASE_URL } from '../services/client';
 
@@ -168,9 +169,6 @@ export const PostPage = () => {
     }
 
     const imageUrl = getImageUrl(post.imagen_url);
-    const userAvatarUrl = post.user?.avatar_url
-        ? (post.user.avatar_url.startsWith('http') ? post.user.avatar_url : `${BASE_URL}${post.user.avatar_url}`)
-        : null;
 
     return (
         <div className="h-screen lg:min-h-screen bg-black flex flex-col lg:flex-row lg:overflow-hidden">
@@ -201,13 +199,7 @@ export const PostPage = () => {
             <div className="flex-1 lg:flex-none w-full lg:w-[420px] bg-gray-900 border-t lg:border-t-0 lg:border-l border-gray-800 flex flex-col overflow-y-auto lg:h-full">
                 <div className="p-4 border-b border-gray-800 flex items-center gap-3">
                     <Link to={`/profile/${post.user?.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                        {userAvatarUrl ? (
-                            <img src={userAvatarUrl} alt="avatar" className="w-10 h-10 rounded-full object-cover" />
-                        ) : (
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center text-white font-bold text-sm">
-                                {post.user?.nombre?.charAt(0)?.toUpperCase() || 'U'}
-                            </div>
-                        )}
+                        <Avatar src={post.user?.avatar_url} name={post.user?.nombre} size={10} />
                         <div>
                             <p className="text-white font-semibold text-sm">{post.user?.nombre || 'Usuario'}</p>
                             <p className="text-gray-500 text-xs">@{post.user?.username || 'usuario'}</p>

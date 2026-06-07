@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { deleteComment } from '../services/commentService';
 import { ConfirmModal } from './ConfirmModal';
-import { BASE_URL } from '../services/client';
+import { Avatar } from './Avatar';
 
 export const CommentList = ({ comments, onCommentDeleted }) => {
     const { user: currentUser } = useAuth();
@@ -45,17 +45,7 @@ export const CommentList = ({ comments, onCommentDeleted }) => {
             <div className="space-y-2 mt-2">
                 {comments.map((comment) => (
                     <div key={comment.id} className="flex items-start gap-2 text-sm">
-                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
-                            {comment.user?.avatar_url ? (
-                                <img 
-                                    src={comment.user.avatar_url.startsWith('http') ? comment.user.avatar_url : `${BASE_URL}${comment.user.avatar_url}`} 
-                                    alt={comment.user.nombre} 
-                                    className="w-full h-full rounded-full object-cover" 
-                                />
-                            ) : (
-                                comment.user?.nombre?.charAt(0).toUpperCase() || 'U'
-                            )}
-                        </div>
+                        <Avatar src={comment.user?.avatar_url} name={comment.user?.nombre} size={6} />
                         <div className="flex-1 min-w-0">
                             <span className="font-semibold text-white text-xs">
                                 {comment.user?.username || 'usuario'}

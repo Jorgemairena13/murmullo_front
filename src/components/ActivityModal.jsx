@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { getNotifications, markAllAsRead } from '../services/notificationService';
 import { getFollowRequests, acceptFollowRequest, rejectFollowRequest } from '../services/followRequestService';
 import { Skeleton } from './Skeleton';
-import { BASE_URL } from '../services/client';
+import { Avatar } from './Avatar';
 
 const SkeletonRow = () => (
     <div className="flex items-center gap-3 p-3">
@@ -213,7 +213,6 @@ export const ActivityModal = ({ isOpen, onClose, onUpdate }) => {
                                 <div className="divide-y divide-gray-800">
                                     {notifications.map(notif => {
                                         const actor = notif.data?.actor || {};
-                                        const actorName = actor.nombre || 'Alguien';
                                         const isUnread = !notif.read_at;
                                         return (
                                             <Link
@@ -224,13 +223,7 @@ export const ActivityModal = ({ isOpen, onClose, onUpdate }) => {
                                                     isUnread ? 'bg-purple-900/10' : ''
                                                 }`}
                                             >
-                                                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold shrink-0 overflow-hidden">
-                                                    {actor.avatar_url ? (
-                                                        <img src={actor.avatar_url.startsWith('http') ? actor.avatar_url : `${BASE_URL}${actor.avatar_url}`} alt={actorName} className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        actorName.charAt(0).toUpperCase() || 'U'
-                                                    )}
-                                                </div>
+                                                <Avatar src={actor.avatar_url} name={actor.nombre} size={11} />
                                                 <div className="flex-1 min-w-0">
                                                     <p className={`text-sm truncate ${isUnread ? 'text-white font-semibold' : 'text-gray-300'}`}>
                                                         {notificationText(notif)}
@@ -314,17 +307,7 @@ export const ActivityModal = ({ isOpen, onClose, onUpdate }) => {
                                                     onClick={onClose}
                                                     className="flex items-center gap-3 flex-1 min-w-0"
                                                 >
-                                                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold shrink-0 overflow-hidden">
-                                                        {requester.avatar_url ? (
-                                                            <img
-                                                                src={requester.avatar_url.startsWith('http') ? requester.avatar_url : `${BASE_URL}${requester.avatar_url}`}
-                                                                alt={requester.nombre}
-                                                                className="w-full h-full object-cover"
-                                                            />
-                                                        ) : (
-                                                            requester.nombre?.charAt(0).toUpperCase() || 'U'
-                                                        )}
-                                                    </div>
+                                                    <Avatar src={requester.avatar_url} name={requester.nombre} size={11} />
                                                     <div className="min-w-0">
                                                         <p className="text-white font-semibold text-sm truncate">{requester.nombre}</p>
                                                         <p className="text-gray-500 text-xs truncate">@{requester.username}</p>
